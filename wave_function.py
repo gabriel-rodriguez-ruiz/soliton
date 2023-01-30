@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 L = 10
-t_J = 1
+t_J = 0.1
 Delta = 1
 zeta = t_J/Delta
 
@@ -24,4 +24,6 @@ def Psi(y):
 y_values = np.linspace(-2*L,3*L, 100)
 fig, ax = plt.subplots()
 ax.plot(y_values, [Psi(y) for y in y_values])
-        
+ax.set_ylabel(r"$\Psi$")
+ax.set_xlabel("y")
+ax.text(0, 0.5, f"L={L}, t_J={t_J}, Delta={Delta}")        
