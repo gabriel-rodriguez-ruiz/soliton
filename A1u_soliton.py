@@ -11,15 +11,15 @@ import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u
 from functions import probability_density, get_components
 
-L_x = 20
-L_y = 80
+L_x = 10
+L_y = 100
 t = 1
 Delta = 1
 mu = -1  #-2
 Phi = np.pi   #superconducting phase
 t_J = 1    #t/2
 index = 0   #which zero mode
-L = 60
+L = 80
 H = Hamiltonian_soliton_A1u(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 probability_density_2D, eigenvalues, eigenvectors = probability_density(H, L_x, L_y, index=index)
 
