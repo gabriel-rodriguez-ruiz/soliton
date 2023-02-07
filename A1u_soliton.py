@@ -11,15 +11,15 @@ import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u
 from functions import probability_density, get_components
 
-L_x = 10
-L_y = 100
+L_x = 20
+L_y = 80
 t = 1
 Delta = 1
 mu = -1  #-2
 Phi = np.pi   #superconducting phase
 t_J = 1    #t/2
 index = 0   #which zero mode
-L = 80
+L = 40
 H = Hamiltonian_soliton_A1u(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 probability_density_2D, eigenvalues, eigenvectors = probability_density(H, L_x, L_y, index=index)
 
@@ -53,7 +53,9 @@ zero_plus_state_normalized = zero_plus_state/np.linalg.norm(zero_plus_state[:,:,
 # Spin mean value
 # spin_mean_value = mean_spin(corner_state_normalized)
 
-spin = mean_spin_xy(zero_plus_state_normalized)
+#spin = mean_spin_xy(zero_plus_state_normalized)
+spin = mean_spin_xy(zero_plus_state)
+
 # fig, ax = plt.subplots()
 # image = ax.imshow(spin[:,:,2].T, cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 # plt.colorbar(image)
@@ -79,6 +81,9 @@ fig, ax = plt.subplots()
 image = ax.imshow(spin[:,:,2], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
 
+fig, ax = plt.subplots()
+ax.plot(spin[:,10,2])
+plt.text(0,0, f"Total spin={np.sum(spin[:,10,2])}")
 #%% Phi spectrum
 from functions import phi_spectrum
 
