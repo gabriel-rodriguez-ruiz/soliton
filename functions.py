@@ -49,6 +49,7 @@ def mean_spin(state):
     """Returns a 1D-array of length 3 with the spin mean value of the state.
     State should be a vector of length 4.
     """
+    state = state/np.linalg.norm(state)
     spin_mean_value = np.concatenate([state.T.conj()@S_x@state,
                                       state.T.conj()@S_y@state,
                                       state.T.conj()@S_z@state])

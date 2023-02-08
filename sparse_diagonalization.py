@@ -1,49 +1,33 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb  1 12:04:46 2023
+Created on Wed Feb  8 14:44:35 2023
 
 @author: gabriel
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_soliton_A1u
+from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import probability_density, get_components
+import scipy
 
 L_x = 50
-L_y = 100
+L_y = 200
 t = 1
 Delta = 1
 mu = -1  #-2
 Phi = np.pi   #superconducting phase
 t_J = 1    #t/2
-index = 0   #which zero mode
-L = 40
-H = Hamiltonian_soliton_A1u(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
-probability_density_2D, eigenvalues, eigenvectors = probability_density(H, L_x, L_y, index=index)
-
-#%%
-fig, ax = plt.subplots()
-image = ax.imshow(probability_density_2D, cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
-plt.colorbar(image)
-#ax.set_title(f"{params}")
-ax.set_xlabel("x")
-ax.set_ylabel("y")
-ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
-#plt.plot(probability_density[10,:,0])
-plt.tight_layout()
-
-#%% Energies
-ax2 = fig.add_axes([0.15, 0.15, 0.25, 0.25])
-ax2.scatter(np.arange(0, 4*L_x*L_y, 1), eigenvalues)
-ax2.set_xlim([2*(L_x*L_y-5), 2*(L_x*L_y+5)])
-ax2.set_ylim([-0.05, 0.05])
+index = 1   #which zero mode
+L = 100
+H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=4, sigma=0) 
 
 #%% Spin determination
 from functions import mean_spin_xy, get_components
 
-zero_modes = eigenvectors[:, 2*(L_x*L_y-1):2*(L_x*L_y+1)]      #4 (2) modes with zero energy (with Zeeman)
+zero_modes = eigenvectors_sparse
 creation_up, creation_down, destruction_down, destruction_up = get_components(zero_modes[:,index], L_x, L_y)
 zero_state = np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2) #positive energy eigenvector splitted in components
 # corner_state = zero_plus_state[L_x-2, L_y//2, :].reshape(4,1)  #positive energy point state localized at the junction
@@ -71,6 +55,7 @@ u = spin[:, :, 0]   #x component
 v = spin[:, :, 1]   #y component
 
 # Plotting Vector Field with QUIVER
+fig, ax = plt.subplots()
 ax.quiver(x, y, u, v, color='r', angles='uv')
 ax.set_title('Spin Field in the plane')
 
@@ -85,17 +70,3 @@ ax.plot(spin[:, L_x//2,2])
 total_spin = np.sum(spin[:, L_x//2, 2])
 plt.text(0,0.5, f"Total spin={total_spin}")
 ax.set_title('Spin Field in the z direction')
-
-#%% Phi spectrum
-"""
-from functions import phi_spectrum
-
-Phi_values = np.linspace(0, 2*np.pi, 10)
-phi_energy = phi_spectrum(Hamiltonian_soliton_A1u, Phi_values, t, mu, L_x, L_y, Delta, t_J, L)
-
-fig, ax = plt.subplots()
-ax.plot(Phi_values, phi_energy)
-ax.set_xlabel(r"$\phi$")
-ax.set_ylabel("E")
-"""
-

@@ -6,6 +6,7 @@ Created on Wed Feb  1 11:30:38 2023
 @author: gabriel
 """
 import numpy as np
+import scipy
 
 # Pauli matrices
 sigma_0 = np.eye(2)
@@ -84,3 +85,40 @@ def Hamiltonian_soliton_A1u(t, mu, L_x, L_y, Delta, t_J, Phi, L):
             else:
                 M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
     return M + M.conj().T
+
+def Hamiltonian_soliton_A1u_sparse(t, mu, L_x, L_y, Delta, t_J, Phi, L):
+    M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
+    onsite_A1u = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta
+    for i in range(1, L_x+1):
+      for j in range(1, L_y+1):
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite_A1u[alpha, beta]   
+    hopping_x_A1u = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_x)
+    for i in range(1, L_x//2):
+      for j in range(1, L_y+1):    
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_A1u[alpha, beta]
+    for i in range(L_x//2+1, L_x):
+      for j in range(1, L_y+1):    
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_A1u[alpha, beta]
+    hopping_y_A1u = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_y)
+    for i in range(1, L_x+1):
+      for j in range(1, L_y): 
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j+1, beta, L_x, L_y)] = hopping_y_A1u[alpha, beta]
+    hopping_junction_x = t_J/2 * (np.cos(Phi/2)*np.kron(tau_0, sigma_0) + 1j*np.sin(Phi/2)*np.kron(tau_z, sigma_0))
+    for j in range(1, L_y+1): 
+      for alpha in range(4):
+        for beta in range(4):
+            if j<=(L_y-L)//2:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
+            elif j>(L_y-L)//2 and j<=(L_y+L)//2:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta].conj()
+            else:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
+    return scipy.sparse.csr_matrix(M + M.conj().T)
