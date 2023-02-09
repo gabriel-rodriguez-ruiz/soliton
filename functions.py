@@ -6,6 +6,7 @@ Created on Wed Feb  1 12:05:43 2023
 @author: gabriel
 """
 import numpy as np
+import scipy
 
 # Pauli matrices
 sigma_0 = np.eye(2)
@@ -100,4 +101,14 @@ def phi_spectrum(Hamiltonian, Phi, t, mu, L_x, L_y, Delta, t_J, L):
     for Phi_value in Phi:
         eigenvalues = np.linalg.eigvalsh(Hamiltonian(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value, L=L))
         energies.append(eigenvalues[2*(L_x*L_y-3):2*(L_x*L_y+3)])
+    return energies
+
+def phi_spectrum_sparse_single_step(Hamiltonian, Phi, t, mu, L_x, L_y, Delta, t_J):
+    """
+    Returns the phi spectrum for the six lowest energies.
+    """
+    energies = []
+    for Phi_value in Phi:
+        eigenvalues, eigenvectors = scipy.sparse.linalg.eigsh(Hamiltonian(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value), k=4, sigma=0) 
+        energies.append(eigenvalues)
     return energies
