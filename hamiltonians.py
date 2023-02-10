@@ -175,3 +175,56 @@ def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, Phi):
             else:
                 M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta].conj()
     return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def Hamiltonian_A1u_S(t, mu, L_x, L_y, Delta, t_J, Phi):
+    r"""Return the matrix for A1u model in a junction with a superconductor with:
+
+    .. math ::
+       \vec{c_{n,m}} = (c_{n,m,\uparrow},
+                        c_{n,m,\downarrow},
+                        c^\dagger_{n,m,\downarrow},
+                        -c^\dagger_{n,m,\uparrow})^T
+       
+       H_{A1u} = \frac{1}{2} \sum_n^{L_x-1} \sum_m^{L_y} (-\mu \vec{c}^\dagger_{n,m} \tau_z\sigma_0  \vec{c}_{n,m}) +
+           \frac{1}{2} \sum_n^{L_x-2} \sum_m^{L_y} \left( \vec{c}^\dagger_{n,m}\left[ 
+            -t\tau_z\sigma_0 -
+            i\frac{\Delta}{2} \tau_x\sigma_x \right] \vec{c}_{n+1,m} + H.c. \right) +
+           \frac{1}{2} \sum_n^{L_x-1} \sum_m^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
+            -t\tau_z\sigma_0 -
+            i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
+       
+        H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}(cos(\phi/2)\tau_0\sigma_0+(\theta(L_y/2-m)-\theta(m-L_y/2))isin(\phi/2)\tau_z\sigma_0)\vec{c}_{L_x,m}+H.c.]
+    """
+    M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
+    onsite_A1u = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta
+    for i in range(1, L_x):
+      for j in range(1, L_y+1):
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite_A1u[alpha, beta]   
+    onsite_S = -mu/4 * np.kron(tau_z, sigma_0) + Delta/4*np.kron(tau_x, sigma_0) 
+    for j in range(1, L_y+1):
+      for alpha in range(4):
+        for beta in range(4):
+          M[index(L_x, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = onsite_S[alpha, beta]
+    hopping_x_A1u = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_x)
+    for i in range(1, L_x-1):
+      for j in range(1, L_y+1):    
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_A1u[alpha, beta]
+    hopping_y = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_y)
+    for i in range(1, L_x):
+      for j in range(1, L_y): 
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j+1, beta, L_x, L_y)] = hopping_y[alpha, beta]
+    hopping_junction_x = t_J/2 * (np.cos(Phi/2)*np.kron(tau_0, sigma_0) + 1j*np.sin(Phi/2)*np.kron(tau_z, sigma_0))
+    for j in range(1, L_y+1): 
+      for alpha in range(4):
+        for beta in range(4):
+            if j<=L_y//2:
+                M[index(L_x-1, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
+            else:
+                M[index(L_x-1, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta].conj()
+    return scipy.sparse.csr_matrix(M + M.conj().T)

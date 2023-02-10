@@ -24,7 +24,7 @@ P = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])  #particle projector
 # S_y = np.kron(tau_0, sigma_y)
 # S_z = np.kron(tau_0, sigma_z)
 
-S_x = P.T@sigma_x@P
+S_x = P.T@sigma_x@P         #I do not write the factor 1/2 because I should only normalize the particle part.
 S_y = P.T@sigma_y@P
 S_z = P.T@sigma_z@P
 
@@ -50,7 +50,7 @@ def mean_spin(state):
     """Returns a 1D-array of length 3 with the spin mean value of the state.
     State should be a vector of length 4.
     """
-    state = state/np.linalg.norm(state)
+    #state = state/np.linalg.norm(state)
     spin_mean_value = np.concatenate([state.T.conj()@S_x@state,
                                       state.T.conj()@S_y@state,
                                       state.T.conj()@S_z@state])
@@ -77,10 +77,10 @@ def get_components(state, L_x, L_y):
     destruction_down = state[1::4].reshape((L_x, L_y))
     creation_down = state[2::4].reshape((L_x, L_y))
     creation_up = state[3::4].reshape((L_x, L_y))
-    return (np.flip(creation_up.T, axis=0),
-            np.flip(creation_down.T, axis=0),
+    return (np.flip(destruction_up.T, axis=0),
             np.flip(destruction_down.T, axis=0),
-            np.flip(destruction_up.T, axis=0))
+            np.flip(creation_down.T, axis=0),
+            np.flip(creation_up.T, axis=0))
 
 def probability_density(Hamiltonian, L_x, L_y, index):
     """

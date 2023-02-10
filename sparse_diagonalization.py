@@ -17,19 +17,20 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -1  #-2
-Phi = np.pi   #superconducting phase
+Phi = np.pi+np.pi/2  #superconducting phase
 t_J = 1    #t/2
-index = 0   #which zero mode (less than k)
 L = 100
 k = 4   #number of eigenvalues
+
 H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 #H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
-a, b, c, d = get_components(eigenvectors_sparse[:,index], L_x, L_y)
-probability_density = np.abs(a)**2 + np.abs(b)**2 + np.abs(c)**2 + np.abs(d)**2
 
 #%% Probability density
+index = 2   #which zero mode (less than k)
+a, b, c, d = get_components(eigenvectors_sparse[:,index], L_x, L_y)
+probability_density = np.abs(a)**2 + np.abs(b)**2 + np.abs(c)**2 + np.abs(d)**2
 
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density, cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
@@ -50,12 +51,11 @@ creation_up, creation_down, destruction_down, destruction_up = get_components(ze
 zero_state = np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2) #positive energy eigenvector splitted in components
 # corner_state = zero_plus_state[L_x-2, L_y//2, :].reshape(4,1)  #positive energy point state localized at the junction
 # corner_state_normalized = corner_state/np.linalg.norm(corner_state[:2]) #normalization with only particle part
-zero_state_normalized = zero_state/np.linalg.norm(zero_state)
-# Spin mean value
 # spin_mean_value = mean_spin(corner_state_normalized)
 
-spin = mean_spin_xy(zero_state_normalized)
+spin = mean_spin_xy(zero_state)
 
+#%%
 # fig, ax = plt.subplots()
 # image = ax.imshow(spin[:,:,2].T, cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 # plt.colorbar(image)
@@ -73,20 +73,24 @@ u = spin[:, :, 0]   #x component
 v = spin[:, :, 1]   #y component
 
 # Plotting Vector Field with QUIVER
-#ax.quiver(x, y, u, v, color='r', angles='uv')
-#ax.set_title('Spin Field in the plane')
+fig,ax = plt.subplots()
+ax.quiver(x, y, u, v, color='r', angles='uv')
+ax.set_title('Spin Field in the plane')
 
 #%% Spin in z
 fig, ax = plt.subplots()
 image = ax.imshow(spin[:,:,2], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
 ax.set_title('Spin Field in the z direction')
+plt.text(0,0, f"index={index}")
 
 fig, ax = plt.subplots()
 ax.plot(spin[:, L_x//2,2])
 total_spin = np.sum(spin[:, L_x//2, 2])
-plt.text(0,0.5, f"Total spin={total_spin}")
+plt.text(0,0.25, f"Total spin={total_spin}, index={index}")
+plt.text(0,-0.25, f"Total spin={total_spin}, index={index}")
 ax.set_title('Spin Field in the z direction')
+plt.text(0,0, f"index={index}")
 
 #%% Phi spectrum
 """
