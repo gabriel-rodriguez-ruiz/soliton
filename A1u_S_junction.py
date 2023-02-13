@@ -12,12 +12,12 @@ from hamiltonians import Hamiltonian_A1u_S
 from functions import get_components
 import scipy
 
-L_x = 50
-L_y = 50
+L_x = 200
+L_y = 200
 t = 1
 Delta = 1
 mu = -2
-Phi = 0.5*np.pi   #superconducting phase
+Phi = np.pi/2   #superconducting phase
 t_J = 1    #t/2
 k = 4
 
@@ -41,24 +41,21 @@ plt.tight_layout()
 #%% Energies
 ax2 = fig.add_axes([0.3, 0.3, 0.25, 0.25])
 ax2.scatter(np.linspace(0, len(eigenvalues_sparse), len(eigenvalues_sparse)), eigenvalues_sparse)
-ax2.set_xlim([2*(L_x*L_y-5), 2*(L_x*L_y+5)])
-ax2.set_ylim([-0.05, 0.05])
+# ax2.set_xlim([2*(L_x*L_y-5), 2*(L_x*L_y+5)])
+# ax2.set_ylim([-0.05, 0.05])
 
 #%% Spin determination
 from functions import mean_spin, mean_spin_xy, get_components
 
-index = 2 #which zero mode
 zero_modes = eigenvectors_sparse      #4 (2) modes with zero energy (with Zeeman)
 creation_up, creation_down, destruction_down, destruction_up = get_components(zero_modes[:,index], L_x, L_y)
-zero_plus_state = np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2) #positive energy eigenvector splitted in components
-corner_state = zero_plus_state[L_x-2, L_y//2, :].reshape(4,1)  #positive energy point state localized at the junction
-corner_state_normalized = corner_state/np.linalg.norm(corner_state[:2]) #normalization with only particle part
-zero_plus_state_normalized = zero_plus_state/np.linalg.norm(zero_plus_state[:,:,:2], axis=2, keepdims=True)
+zero_state = np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2) #positive energy eigenvector splitted in components
+corner_state = zero_state[L_y//2, L_x-2, :].reshape(4,1)  #positive energy point state localized at the junction
 
 # Spin mean value
-spin_mean_value = mean_spin(corner_state_normalized)
+spin_mean_value = mean_spin(corner_state)
 
-spin = mean_spin_xy(zero_plus_state_normalized)
+spin = mean_spin_xy(zero_state)
 # fig, ax = plt.subplots()
 # image = ax.imshow(spin[:,:,2].T, cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 # plt.colorbar(image)
@@ -79,7 +76,7 @@ v = spin[:, :, 1]   #y component
 ax.quiver(x, y, u, v, color='r')
 ax.set_title('Spin Field in the plane')
 
-#%% Spin in z
+#%% Spin in y
 fig, ax = plt.subplots()
-image = ax.imshow(spin[:,:,2], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
+image = ax.imshow(spin[:,:,1], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
