@@ -8,11 +8,11 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse
+from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse, Hamiltonian_A1u_sparse, Zeeman
 from functions import probability_density, get_components
 import scipy
 
-L_x = 50
+L_x = 200
 L_y = 200
 t = 1
 Delta = 1
@@ -21,9 +21,13 @@ Phi = np.pi+np.pi/2  #superconducting phase
 t_J = 1    #t/2
 L = 100
 k = 4   #number of eigenvalues
+Delta_Z = 0
+theta = np.pi/2
+phi = 0
 
 #H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+#H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
@@ -84,13 +88,13 @@ plt.colorbar(image)
 ax.set_title('Spin Field in the z direction')
 plt.text(0,0, f"index={index}")
 
-fig, ax = plt.subplots()
-ax.plot(spin[:, L_x//2,2])
-total_spin = np.sum(spin[:, L_x//2, 2])
-plt.text(0,0.25, f"Total spin={total_spin}, index={index}")
-plt.text(0,-0.25, f"Total spin={total_spin}, index={index}")
-ax.set_title('Spin Field in the z direction')
-plt.text(0,0, f"index={index}")
+# fig, ax = plt.subplots()
+# ax.plot(spin[:, L_x//2,2])
+# total_spin = np.sum(spin[:, L_x//2, 2])
+# plt.text(0,0.25, f"Total spin={total_spin}, index={index}")
+# plt.text(0,-0.25, f"Total spin={total_spin}, index={index}")
+# ax.set_title('Spin Field in the z direction')
+# plt.text(0,0, f"index={index}")
 
 #%% Phi spectrum
 """

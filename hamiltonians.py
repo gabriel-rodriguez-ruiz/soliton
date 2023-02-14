@@ -228,3 +228,64 @@ def Hamiltonian_A1u_S(t, mu, L_x, L_y, Delta, t_J, Phi):
             else:
                 M[index(L_x-1, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta].conj()
     return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta):
+    r"""Return the matrix for A1u model with:
+
+    .. math ::
+       \vec{c_{n,m}} = (c_{n,m,\uparrow},
+                        c_{n,m,\downarrow},
+                        c^\dagger_{n,m,\downarrow},
+                        -c^\dagger_{n,m,\uparrow})^T
+       
+       H = \frac{1}{2} \sum_n^{L_x} \sum_m^{L_y} (-\mu \vec{c}^\dagger_{n,m} \tau_z\sigma_0  \vec{c}_{n,m}) +
+           \frac{1}{2} \sum_n^{L_x-1} \sum_m^{L_y} \left( \vec{c}^\dagger_{n,m}\left[ 
+            -t\tau_z\sigma_0 -
+            i\frac{\Delta}{2} \tau_x\sigma_x \right] \vec{c}_{n+1,m} + H.c. \right) +
+           \frac{1}{2} \sum_n^{L_x} \sum_m^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
+            -t\tau_z\sigma_0 -
+            i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
+    """
+    M = scipy.sparse.lil_matrix((4*L_x*L_y, 4*L_x*L_y), dtype=complex)
+    onsite = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta
+    for i in range(1, L_x+1):
+      for j in range(1, L_y+1):
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite[alpha, beta]   
+    hopping_x = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_x)
+    for i in range(1, L_x):
+      for j in range(1, L_y+1):    
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x[alpha, beta]
+    hopping_y = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_y)
+    for i in range(1, L_x+1):
+      for j in range(1, L_y): 
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j+1, beta, L_x, L_y)] = hopping_y[alpha, beta]
+    return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def Zeeman(theta, phi, Delta_Z, L_x, L_y):
+    r""" Return the Zeeman Hamiltonian matrix in 2D.
+    
+    .. math::
+        H_Z = \frac{\Delta_Z}{2} \sum_n^{L_x} \sum_m^{L_y} \vec{c}^\dagger_{n,m}
+        \tau_0(\cos(\varphi)\sin(\theta)\sigma_x + \sin(\varphi)\sin(\theta)\sigma_y + \cos(\theta)\sigma_z)\vec{c}_{n,m}
+    
+        \vec{c}_{n,m} = (c_{n,m,\uparrow},
+                         c_{n,m,\downarrow},
+                         c^\dagger_{n,m,\downarrow},
+                         -c^\dagger_{n,m,\uparrow})^T
+    """
+    M = scipy.sparse.lil_matrix((4*L_x*L_y, 4*L_x*L_y), dtype=complex)
+    onsite = Delta_Z/2*( np.cos(phi)*np.sin(theta)*np.kron(tau_0, sigma_x) +
+                        np.sin(phi)*np.sin(theta)*np.kron(tau_0, sigma_y) +
+                        np.cos(theta)*np.kron(tau_0, sigma_z))
+    for i in range(1, L_x+1):
+      for j in range(1, L_y+1):
+          for alpha in range(4):
+              for beta in range(4):
+                  M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite[alpha, beta]
+    return scipy.sparse.csr_matrix(M)

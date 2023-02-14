@@ -20,13 +20,13 @@ tau_z = np.array([[1, 0], [0, -1]])
 
 # Spin operators
 P = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])  #particle projector
-S_x = 1/4*np.kron(tau_0, sigma_x)
-S_y = 1/4*np.kron(tau_z, sigma_y)
-S_z = 1/4*np.kron(tau_z, sigma_z)
+# S_x = np.kron(tau_z, sigma_x)
+# S_y = np.kron(tau_z, sigma_y)
+# S_z = np.kron(tau_0, sigma_z)
 
-# S_x = P.T@sigma_x@P         #I do not write the factor 1/2 because I should only normalize the particle part.
-# S_y = P.T@sigma_y@P
-# S_z = P.T@sigma_z@P
+S_x = P.T@sigma_x@P         #I do not write the factor 1/2 because I should only normalize the particle part.
+S_y = P.T@sigma_y@P
+S_z = P.T@sigma_z@P
 
 def spectrum(system, k_values, **params):
     """Returns an array whose rows are the eigenvalues of the system for
