@@ -13,7 +13,7 @@ from functions import get_components
 import scipy
 
 L_x = 50
-L_y = 1000
+L_y = 400
 t = 1
 Delta = 1
 mu = -2
