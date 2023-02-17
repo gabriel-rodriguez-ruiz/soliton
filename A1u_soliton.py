@@ -11,15 +11,15 @@ import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u
 from functions import probability_density, get_components
 
-L_x = 50
-L_y = 100
+L_x = 10
+L_y = 50
 t = 1
 Delta = 1
 mu = -1  #-2
 Phi = np.pi   #superconducting phase
 t_J = 1    #t/2
 index = 0   #which zero mode
-L = 40
+L = 20
 H = Hamiltonian_soliton_A1u(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 probability_density_2D, eigenvalues, eigenvectors = probability_density(H, L_x, L_y, index=index)
 
@@ -51,7 +51,7 @@ zero_state = np.stack((destruction_up, destruction_down, creation_down, creation
 zero_state_normalized = zero_state/np.linalg.norm(zero_state)
 # Spin mean value
 # spin_mean_value = mean_spin(corner_state_normalized)
-
+localized_states = zero_state[(L_y-L)//2, L_x//2,:]
 spin = mean_spin_xy(zero_state_normalized)
 
 # fig, ax = plt.subplots()

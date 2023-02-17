@@ -7,11 +7,11 @@ Created on Mon Jan 30 14:42:34 2023
 import numpy as np
 import matplotlib.pyplot as plt
 
-L = 10
-t_J = 0.1
+L = 100
+t_J = 1
 Delta = 1
 zeta = t_J/Delta
-E = 0.2  # si E+t_J/Delta>0
+E = .2  # si E+t_J/Delta>0
 
 def Psi(y, i):
     """Wavefunction with index i for a specific range of energy."""

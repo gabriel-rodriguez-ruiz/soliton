@@ -12,14 +12,14 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 100
-L_y = 100
+L_x = 120
+L_y = 120
 t = 1
 Delta = 1
 mu = -1  #-2
 Phi = np.pi  #superconducting phase
 t_J = 1    #t/2
-L =50
+L = 60
 k = 4   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
@@ -41,8 +41,8 @@ for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
     probability_density.append(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
-    localized_state_up.append(zero_state[i][(L_x-L)//2, L_y//2,:])
-    localized_state_down.append(zero_state[i][(L_x+L)//2, L_y//2,:])
+    localized_state_up.append(zero_state[i][(L_y-L)//2, L_x//2,:])
+    localized_state_down.append(zero_state[i][(L_y+L)//2, L_x//2,:])
 
 #%%
 index = 0
