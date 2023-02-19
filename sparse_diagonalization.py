@@ -19,8 +19,8 @@ Delta = 1
 mu = -1  #-2
 Phi = np.pi  #superconducting phase
 t_J = 1    #t/2
-L = 60
-k = 4   #number of eigenvalues
+L = 100
+k = 8   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
 phi = 0
@@ -32,7 +32,7 @@ H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
 #%% Probability density
-index = [0,1,2,3]   #which zero mode (less than k)
+index = np.arange(k)   #which zero mode (less than k)
 probability_density = []
 zero_state = []
 localized_state_up = [] # it is the site ((L_x+L)/2, L_y/2)
@@ -45,7 +45,7 @@ for i in index:
     localized_state_down.append(zero_state[i][(L_y+L)//2, L_x//2,:])
 
 #%%
-index = 0
+index = 4
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -69,7 +69,7 @@ from functions import mean_spin_xy, get_components
 # spin_mean_value = mean_spin(corner_state_normalized)
 
 spin = []
-for i in range(4):
+for i in range(k):
     spin.append(mean_spin_xy(zero_state[i]))
 
 #%%
