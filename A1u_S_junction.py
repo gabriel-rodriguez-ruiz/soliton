@@ -12,8 +12,8 @@ from hamiltonians import Hamiltonian_A1u_S, Zeeman, Hamiltonian_A1u_S_double_sol
 from functions import get_components
 import scipy
 
-L_x = 100
-L_y = 100
+L_x = 120
+L_y = 120
 t = 1
 Delta = 1
 mu = -2
