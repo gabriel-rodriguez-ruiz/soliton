@@ -13,14 +13,14 @@ from functions import get_components
 import scipy
 
 L_x = 120
-L_y = 120
+L_y = 200
 t = 1
 Delta = 1
 mu = -1  #-2
-Phi = np.pi  #superconducting phase
+Phi = 0.64#np.pi  #superconducting phase
 t_J = 1    #t/2
 L = L_y//2
-k = 8   #number of eigenvalues
+k = 12   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
 phi = 0
@@ -46,23 +46,23 @@ for i in index:
 
 #%% Plotting of probability density
 
-plt.rc("font", family="serif")  # set font family
-plt.rc("xtick", labelsize="small")  # reduced tick label size
-plt.rc("ytick", labelsize="small")
-plt.rc("text", usetex=True) # for better LaTex (slower)
-plt.rcParams['xtick.top'] = True    #ticks on top
-plt.rcParams['xtick.labeltop'] = False
-plt.rcParams['ytick.right'] = True    #ticks on left
-plt.rcParams['ytick.labelright'] = False
+# plt.rc("font", family="serif")  # set font family
+# plt.rc("xtick", labelsize="small")  # reduced tick label size
+# plt.rc("ytick", labelsize="small")
+# plt.rc("text", usetex=True) # for better LaTex (slower)
+# plt.rcParams['xtick.top'] = True    #ticks on top
+# plt.rcParams['xtick.labeltop'] = False
+# plt.rcParams['ytick.right'] = True    #ticks on left
+# plt.rcParams['ytick.labelright'] = False
 
-index = 0
+index = 6
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
 #ax.set_title(f"{params}")
 ax.set_xlabel("x")
 ax.set_ylabel("y")
-#ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
+ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
 #plt.plot(probability_density[10,:,0])
 plt.tight_layout()
 ax.set_title("Probability density (TRITOPs-TRITOPs)")
