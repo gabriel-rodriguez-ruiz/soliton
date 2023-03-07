@@ -13,19 +13,20 @@ from functions import get_components
 import scipy
 
 L_x = 120
-L_y = 200
+L_y = 120
 t = 1
 Delta = 1
-mu = -1  #-2
-Phi = 0.64#np.pi  #superconducting phase
+mu = -2  #-2
+Phi = np.pi  #superconducting phase
 t_J = 1    #t/2
 L = L_y//2
-k = 12   #number of eigenvalues
+k = 8   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
 phi = 0
 
 H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
 #H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 #H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
@@ -55,7 +56,7 @@ for i in index:
 # plt.rcParams['ytick.right'] = True    #ticks on left
 # plt.rcParams['ytick.labelright'] = False
 
-index = 6
+index = 1
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -132,3 +133,21 @@ ax.set_xlabel(r"$\phi$")
 ax.set_ylabel("E")
 
 """
+
+#%% Spinors to txt
+
+with open("spinors.txt", "w+") as f:
+  data = f.read()
+  f.write(f"{params}\n")
+  f.write(f"energies={eigenvalues_sparse}\n\n")
+  for i in range(4):
+      f.write(f"{i}th-localized state at the bottom\n")
+      for j in range(len(localized_state_down[i])):
+          f.write(str(localized_state_down[i].round(4)[j])+"\n")
+  f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+  for i in range(4):
+      f.write(f"{i}th-localized state at the top\n")
+      for j in range(len(localized_state_up[i])):
+          f.write(str(localized_state_up[i].round(4)[j])+"\n")
+      
+  
