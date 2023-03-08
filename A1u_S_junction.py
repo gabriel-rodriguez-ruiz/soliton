@@ -17,7 +17,7 @@ L_y = 120
 t = 1
 Delta = 1
 mu = -2
-Phi = np.pi/2   #superconducting phase
+Phi = np.pi/2   #superconducting phase np.pi/2
 t_J = 1    #t/2
 k = 4
 theta = np.pi/2
@@ -25,8 +25,8 @@ phi = np.pi/2
 Delta_Z = 0
 L = L_y//2
 
-#H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi) + Zeeman(theta=theta, phi=phi, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y)
-H = Hamiltonian_A1u_S_double_soliton(t, mu, L_x, L_y, Delta, t_J, Phi, L)
+H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi) + Zeeman(theta=theta, phi=phi, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y)
+#H = Hamiltonian_A1u_S_double_soliton(t, mu, L_x, L_y, Delta, t_J, Phi, L)
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
 #%% Probability density

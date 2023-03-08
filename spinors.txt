@@ -1,45 +1,45 @@
-{'t': 1, 'mu': -2, 'L_x': 120, 'L_y': 120, 'Delta': 1, 't_J': 1, 'Phi': 3.141592653589793, 'L': 60}
-energies=[ 7.71188234e-16  7.83398822e-16 -8.43850394e-16 -8.54060830e-16
- -3.20013777e-03 -3.20013777e-03  3.20013777e-03  3.20013777e-03]
+{'t': 1, 'mu': -2, 'L_x': 120, 'L_y': 120, 'Delta': 1, 't_J': 1, 'Phi': 1.5707963267948966, 'L': 60}
+energies=[-5.66663580e-07  5.66663580e-07  4.28083339e-03 -4.28083339e-03
+ -8.56110955e-03  8.56110955e-03  1.28402631e-02 -1.28402631e-02]
 
 0th-localized state at the bottom
 0j
-(0.1262-0.1783j)
-(-0.0957-0.1963j)
+(-0+0j)
+0j
 -0j
 1th-localized state at the bottom
-(-0.154-0.1466j)
-(-0+0j)
-0j
-(-0.0545+0.2056j)
-2th-localized state at the bottom
-(0.1528+0.1611j)
-0j
+(-0-0j)
 -0j
-(0.0677-0.2115j)
+(-0-0j)
+(-0+0j)
+2th-localized state at the bottom
+-0j
+(-0+0j)
+-0j
+-0j
 3th-localized state at the bottom
 -0j
-(-0.1359+0.1684j)
-(0.0823+0.2001j)
-(-0-0j)
+(-0+0j)
+-0j
+-0j
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 0th-localized state at the top
--0j
-(0.1798+0.1203j)
-(0.192-0.0998j)
 (-0-0j)
+(-0-0j)
+(-0-0j)
+0j
 1th-localized state at the top
-(-0.1531+0.1608j)
-(-0-0j)
 (-0+0j)
-(0.2146+0.0569j)
-2th-localized state at the top
-(-0.1542+0.1464j)
+(-0+0j)
+(-0+0j)
 -0j
+2th-localized state at the top
+0j
+0j
+0j
 (-0-0j)
-(0.2025+0.0648j)
 3th-localized state at the top
 0j
-(0.1663+0.1416j)
-(0.2041-0.0777j)
--0j
+0j
+0j
+(-0-0j)
