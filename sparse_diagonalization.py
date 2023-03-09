@@ -12,14 +12,14 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 120
-L_y = 120
+L_x = 200
+L_y = 200
 t = 1
 Delta = 1
-mu = -1  #-2
+mu = -2  #-2
 Phi = np.pi  #superconducting phase
-t_J = 1    #t/2
-L = 100
+t_J = 0.1    #t/2
+L = 30
 k = 8   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
@@ -45,7 +45,7 @@ for i in index:
     localized_state_down.append(zero_state[i][(L_y+L)//2, L_x//2,:])
 
 #%%
-index = 4
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -58,6 +58,12 @@ plt.tight_layout()
 ax.set_title("Probability density")
 plt.tight_layout()
 
+fig, ax = plt.subplots()
+ax.plot(probability_density[index][:, L_x//2])
+ax.set_xlabel("y")
+ax.set_ylabel("Probability density")
+ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
+ax.set_title("Probability density at the junction")
 #%% Spin determination
 from functions import mean_spin_xy, get_components
 
