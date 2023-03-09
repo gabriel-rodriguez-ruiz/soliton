@@ -1,0 +1,45 @@
+{'t': 1, 'mu': -2, 'L_x': 120, 'L_y': 120, 'Delta': 1, 't_J': 1, 'Phi': 1.5707963267948966, 'L': 60}
+energies=[-5.66663580e-07  5.66663580e-07  4.28083339e-03 -4.28083339e-03
+ -8.56110955e-03  8.56110955e-03  1.28402631e-02 -1.28402631e-02]
+
+0th-localized state at the bottom
+0j
+(-0+0j)
+0j
+-0j
+1th-localized state at the bottom
+(-0-0j)
+-0j
+(-0-0j)
+(-0+0j)
+2th-localized state at the bottom
+-0j
+(-0+0j)
+-0j
+-0j
+3th-localized state at the bottom
+-0j
+(-0+0j)
+-0j
+-0j
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+0th-localized state at the top
+(-0-0j)
+(-0-0j)
+(-0-0j)
+0j
+1th-localized state at the top
+(-0+0j)
+(-0+0j)
+(-0+0j)
+-0j
+2th-localized state at the top
+0j
+0j
+0j
+(-0-0j)
+3th-localized state at the top
+0j
+0j
+0j
+(-0-0j)
