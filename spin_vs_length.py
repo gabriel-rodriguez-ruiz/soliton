@@ -39,6 +39,7 @@ for i,L_y in enumerate(L_y_values):
     
 fig, ax = plt.subplots()
 ax.plot(L_y_values, [np.sum(spin_values[i][:,:,1]) for i in range(len(L_y_values))])
-ax.set_title("Total spin in y-direction")
-ax.set_ylabel(r"$S_y$")
-ax.set_xlabel(r"$L_y$")
+#ax.set_title("Total spin in y-direction", fontsize=18)
+ax.set_ylabel(r"$S_y$", fontsize=18)
+ax.set_xlabel(r"$L_y$", fontsize=18)
+plt.tight_layout()

@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb  8 14:44:35 2023
+Created on Fri Mar 10 07:57:39 2023
 
-@author: gabriel
+@author: gabri
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse, Hamiltonian_A1u_sparse, Zeeman, Hamiltonian_A1u_S
@@ -25,6 +23,7 @@ Delta_Z = 0
 theta = np.pi/2
 phi = 0
 
+###########Choose Hamiltonian
 #H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
@@ -57,7 +56,7 @@ plt.rcParams['xtick.labeltop'] = False
 plt.rcParams['ytick.right'] = True    #ticks on left
 plt.rcParams['ytick.labelright'] = False
 
-index = 1
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -65,10 +64,28 @@ plt.colorbar(image)
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 #ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
-ax.text(5,25, rf'$\Phi={np.round(Phi, 2)}$')
+#ax.text(5,25, rf'$\Phi={np.round(Phi, 2)}$')
 #plt.plot(probability_density[10,:,0])
 plt.tight_layout()
-ax.set_title("Probability density (TRITOPS-S)")
+ax.set_title("Probability density (TRITOPS-TRITOPS)")
+def single_soliton(y, L_y):
+    return np.heaviside(L_y//2-y_values, 1)-np.heaviside(y_values-L_y//2, 1)
+
+def double_soliton(y, L_y, L):
+    return 1+2*(np.heaviside(y_values-((L_y+L)/2), 1)-np.heaviside(y_values-((L_y-L)//2), 1))
+
+
+# left, bottom, width, height = [0.65, 0.28, 0.1, 0.5]
+left, bottom, width, height = [0.65, 0.28, 0.1, 0.5]
+ax2 = fig.add_axes([left, bottom, width, height])
+y_values = np.arange(L_y+1)
+# ax2.plot(single_soliton(y_values, L_y), y_values, "r")
+ax2.plot(double_soliton(y_values, L_y, L), y_values, "r")
+ax2.set_ylabel("y")
+ax2.set_xlabel(r"$sgn(\phi)$")
+ax2.set_title(r"$f_{2s}$")
+ax2.set_ylim((20,100))
+
 plt.tight_layout()
 
 fig, ax = plt.subplots()
@@ -77,6 +94,7 @@ ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
 ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
 ax.set_title("Probability density at the junction")
+
 #%% Spin determination
 from functions import mean_spin_xy, get_components
 
@@ -114,11 +132,18 @@ ax.quiver(x, y, u, v, color='r', angles='uv')
 ax.set_title('Spin Field in the plane')
 
 #%% Spin in z
-fig, ax = plt.subplots()
-image = ax.imshow(spin[index][:,:,2], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
-plt.colorbar(image)
-ax.set_title('Spin Field in the z direction')
-plt.text(0,0, f"index={index}")
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(5,8))
+i = 0
+for ax in axes.flat:
+    image = ax.imshow(spin[i][:,:,2], cmap="Blues", origin="lower", vmin=np.min(spin), vmax=np.max(spin)) #I have made the transpose and changed the origin to have xy axes as usually
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    i += 1
+fig.subplots_adjust(right=0.9)
+cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+fig.colorbar(image, cax=cbar_ax)
+axes[0].set_title('Spin Field in the z direction')
+#plt.text(0,0, f"index={index}")
 
 # fig, ax = plt.subplots()
 # ax.plot(spin[:, L_x//2,2])
@@ -128,34 +153,3 @@ plt.text(0,0, f"index={index}")
 # ax.set_title('Spin Field in the z direction')
 # plt.text(0,0, f"index={index}")
 
-#%% Phi spectrum
-"""
-from functions import phi_spectrum_sparse_single_step
-
-Phi_values = np.linspace(0, 2*np.pi, 10)
-phi_energy = phi_spectrum_sparse_single_step(Hamiltonian_A1u_single_step_sparse, Phi_values, t, mu, L_x, L_y, Delta, t_J)
-
-fig, ax = plt.subplots()
-ax.plot(Phi_values, phi_energy)
-ax.set_xlabel(r"$\phi$")
-ax.set_ylabel("E")
-
-"""
-
-#%% Spinors to txt
-
-with open("spinors.txt", "w+") as f:
-  data = f.read()
-  f.write(f"{params}\n")
-  f.write(f"energies={eigenvalues_sparse}\n\n")
-  for i in range(4):
-      f.write(f"{i}th-localized state at the bottom\n")
-      for j in range(len(localized_state_down[i])):
-          f.write(str(localized_state_down[i].round(4)[j])+"\n")
-  f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
-  for i in range(4):
-      f.write(f"{i}th-localized state at the top\n")
-      for j in range(len(localized_state_up[i])):
-          f.write(str(localized_state_up[i].round(4)[j])+"\n")
-      
-  

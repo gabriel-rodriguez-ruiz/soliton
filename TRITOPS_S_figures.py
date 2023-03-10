@@ -51,15 +51,15 @@ for i in index:
 plt.rc("font", family="serif")  # set font family
 plt.rc("xtick", labelsize="large")  # reduced tick label size
 plt.rc("ytick", labelsize="large")
-plt.rc('font', size=12) #controls default text size
+plt.rc('font', size=18) #controls default text size
 plt.rc('axes', titlesize=18) #fontsize of the title
-plt.rc('axes', labelsize=12) #fontsize of the x and y labels
+plt.rc('axes', labelsize=18) #fontsize of the x and y labels
 plt.rc("text", usetex=True) # for better LaTex (slower)
 plt.rcParams['xtick.top'] = True    #ticks on top
 plt.rcParams['xtick.labeltop'] = False
 plt.rcParams['ytick.right'] = True    #ticks on left
 plt.rcParams['ytick.labelright'] = False
-plt.rc('legend', fontsize=16) #fontsize of the legend
+plt.rc('legend', fontsize=18) #fontsize of the legend
 
 index = 0
 fig, ax = plt.subplots()    
