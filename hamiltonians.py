@@ -140,7 +140,7 @@ def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, Phi):
             -t\tau_z\sigma_0 -
             i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
        
-        H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}(cos(\phi/2)\tau_0\sigma_0+(\theta(L_y/2-m)-\theta(m-L_y/2))isin(\phi/2)\tau_z\sigma_0)\vec{c}_{L_x,m}+H.c.]
+        H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}^\dagger(cos(\phi/2)\tau_0\sigma_0+(\theta(L_y/2-m)-\theta(m-L_y/2))isin(\phi/2)\tau_z\sigma_0)\vec{c}_{L_x,m}+H.c.]
     """
     M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
     onsite_A1u = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta

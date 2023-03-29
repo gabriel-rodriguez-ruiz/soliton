@@ -17,7 +17,7 @@ L_y = 120
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = np.pi  #superconducting phase
+Phi = np.pi+0.1*np.pi  #superconducting phase
 t_J = 1    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
@@ -26,9 +26,9 @@ theta = np.pi/2
 phi = 0
 
 #H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+#H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
-#H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 #H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
@@ -68,7 +68,7 @@ ax.set_ylabel("y")
 ax.text(5,25, rf'$\Phi={np.round(Phi, 2)}$')
 #plt.plot(probability_density[10,:,0])
 plt.tight_layout()
-ax.set_title("Probability density (TRITOPS-S)")
+ax.set_title("Probability density")
 plt.tight_layout()
 
 fig, ax = plt.subplots()
