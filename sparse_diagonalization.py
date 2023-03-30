@@ -17,7 +17,7 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = np.pi  #superconducting phase
+Phi = np.pi+0.5*np.pi  #superconducting phase
 t_J = 1    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
@@ -26,9 +26,9 @@ theta = np.pi/2
 phi = 0
 
 #H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-#H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+#H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 #H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
@@ -40,26 +40,36 @@ zero_state = []
 localized_state_up = [] # it is the site ((L_x+L)/2, L_y/2)
 localized_state_down = []
 localized_state_center = []
+localized_state_bottom_edge_middle = []
+localized_state_left_edge_middle = []
+
 for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
     probability_density.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)/(np.linalg.norm(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)))
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
-    localized_state_up.append(zero_state[i][(L_y-L)//2, L_x//2,:])
-    localized_state_down.append(zero_state[i][(L_y+L)//2, L_x//2,:])
+    localized_state_down.append(zero_state[i][(L_y-L)//2, L_x//2,:])
+    localized_state_up.append(zero_state[i][(L_y+L)//2, L_x//2,:])
     localized_state_center.append(zero_state[i][(L_y)//2, L_x//2,:])
+    localized_state_bottom_edge_middle.append(zero_state[i][0, L_x//2,:])
+    localized_state_left_edge_middle.append(zero_state[i][L_y//2, 0,:])
 
 #%% Plotting of probability density
 
 plt.rc("font", family="serif")  # set font family
-plt.rc("xtick", labelsize="small")  # reduced tick label size
-plt.rc("ytick", labelsize="small")
+plt.rc("xtick", labelsize="large")  # reduced tick label size
+plt.rc("ytick", labelsize="large")
+plt.rc('font', size=18) #controls default text size
+plt.rc('axes', titlesize=18) #fontsize of the title
+plt.rc('axes', labelsize=18) #fontsize of the x and y labels
 plt.rc("text", usetex=True) # for better LaTex (slower)
 plt.rcParams['xtick.top'] = True    #ticks on top
 plt.rcParams['xtick.labeltop'] = False
 plt.rcParams['ytick.right'] = True    #ticks on left
 plt.rcParams['ytick.labelright'] = False
+plt.rc('legend', fontsize=18) #fontsize of the legend
 
-index = 0
+
+index = 2
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -131,6 +141,12 @@ plt.text(0,0, f"index={index}")
 # plt.text(0,0, f"index={index}")
 
 #%% Energy spectrum
+
+fig, ax = plt.subplots()
+plt.semilogy(np.abs(eigenvalues_sparse), "o")
+ax.set_xlabel("Label of eingevalue")
+ax.set_ylabel("Absolute value of energy")
+plt.tight_layout()
 
 #%% Phi spectrum
 """
