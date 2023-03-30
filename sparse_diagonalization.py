@@ -12,12 +12,12 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 120
-L_y = 120
+L_x = 200
+L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = np.pi+0.1*np.pi  #superconducting phase
+Phi = np.pi  #superconducting phase
 t_J = 1    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
@@ -39,12 +39,14 @@ probability_density = []
 zero_state = []
 localized_state_up = [] # it is the site ((L_x+L)/2, L_y/2)
 localized_state_down = []
+localized_state_center = []
 for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
     probability_density.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)/(np.linalg.norm(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)))
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
     localized_state_up.append(zero_state[i][(L_y-L)//2, L_x//2,:])
     localized_state_down.append(zero_state[i][(L_y+L)//2, L_x//2,:])
+    localized_state_center.append(zero_state[i][(L_y)//2, L_x//2,:])
 
 #%% Plotting of probability density
 
@@ -57,7 +59,7 @@ plt.rcParams['xtick.labeltop'] = False
 plt.rcParams['ytick.right'] = True    #ticks on left
 plt.rcParams['ytick.labelright'] = False
 
-index = 1
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -77,7 +79,7 @@ ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
 ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
 ax.set_title("Probability density at the junction")
-#%% Spin determination
+    #%% Spin determination
 from functions import mean_spin_xy, get_components
 
 # zero_modes = eigenvectors_sparse
@@ -128,6 +130,8 @@ plt.text(0,0, f"index={index}")
 # ax.set_title('Spin Field in the z direction')
 # plt.text(0,0, f"index={index}")
 
+#%% Energy spectrum
+
 #%% Phi spectrum
 """
 from functions import phi_spectrum_sparse_single_step
@@ -143,7 +147,7 @@ ax.set_ylabel("E")
 """
 
 #%% Spinors to txt
-
+"""
 with open("spinors.txt", "w+") as f:
   data = f.read()
   f.write(f"{params}\n")
@@ -157,5 +161,5 @@ with open("spinors.txt", "w+") as f:
       f.write(f"{i}th-localized state at the top\n")
       for j in range(len(localized_state_up[i])):
           f.write(str(localized_state_up[i].round(4)[j])+"\n")
-      
+ """     
   
