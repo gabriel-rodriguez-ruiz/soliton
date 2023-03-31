@@ -17,8 +17,8 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.01*np.pi  #height of the phase soliton
-t_J = 1    #t/2
+Phi = 0  #height of the phase soliton
+t_J = 0   #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
@@ -39,7 +39,10 @@ probability_density = []
 zero_state = []
 localized_state_up = [] # it is the site ((L_x+L)/2, L_y/2)
 localized_state_down = []
-localized_state_center = []
+localized_state_center_upper_left = []
+localized_state_center_upper_right = []
+localized_state_center_bottom_left = []
+localized_state_center_bottom_right = []
 localized_state_bottom_edge_middle = []
 localized_state_left_edge_middle = []
 
@@ -49,7 +52,10 @@ for i in index:
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
     localized_state_down.append(zero_state[i][(L_y-L)//2, L_x//2,:])
     localized_state_up.append(zero_state[i][(L_y+L)//2, L_x//2,:])
-    localized_state_center.append(zero_state[i][(L_y)//2, L_x//2,:])
+    localized_state_center_upper_left.append(zero_state[i][L_y//2, L_x//2-1,:])
+    localized_state_center_upper_right.append(zero_state[i][L_y//2, L_x//2,:])
+    localized_state_center_bottom_left.append(zero_state[i][L_y//2-1, L_x//2-1,:])
+    localized_state_center_bottom_right.append(zero_state[i][L_y//2-1, L_x//2,:])
     localized_state_bottom_edge_middle.append(zero_state[i][0, L_x//2,:])
     localized_state_left_edge_middle.append(zero_state[i][L_y//2, 0,:])
 
@@ -163,19 +169,23 @@ ax.set_ylabel("E")
 """
 
 #%% Spinors to txt
-"""
 with open("spinors.txt", "w+") as f:
   data = f.read()
   f.write(f"{params}\n")
   f.write(f"energies={eigenvalues_sparse}\n\n")
   for i in range(4):
-      f.write(f"{i}th-localized state at the bottom\n")
-      for j in range(len(localized_state_down[i])):
-          f.write(str(localized_state_down[i].round(4)[j])+"\n")
-  f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
-  for i in range(4):
-      f.write(f"{i}th-localized state at the top\n")
-      for j in range(len(localized_state_up[i])):
-          f.write(str(localized_state_up[i].round(4)[j])+"\n")
- """     
+      f.write(f"{i}th-localized state at the center\n\n")
+      for j in range(4):
+          f.write(f"{str(localized_state_center_upper_left[i].round(4)[j]):30}"+"%    "+
+                  f"{str(localized_state_center_upper_right[i].round(4)[j])}"+"\n")
+      f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+      for j in range(4):
+          f.write(f"{str(localized_state_center_bottom_left[i].round(4)[j]):30}"+"%    "+
+                  f"{str(localized_state_center_bottom_right[i].round(4)[j])}"+"\n")
+      f.write("\n\n")
+    # for i in range(4):
+  #     f.write(f"{i}th-localized state at the top\n")
+  #     for j in range(len(localized_state_up[i])):
+  #         f.write(str(localized_state_up[i].round(4)[j])+"\n")
+   
   
