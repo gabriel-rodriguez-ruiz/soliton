@@ -19,18 +19,41 @@ tau_y = np.array([[0, -1j], [1j, 0]])
 tau_z = np.array([[1, 0], [0, -1]])
 
 def index(i, j, alpha, L_x, L_y):
-  """Return the index of basis vector given the site (i,j)
-  and spin index alpha for i in {1, ..., L_x} and
+  r"""Return the index of basis vector given the site (i,j)
+  and spin index alpha in {0,1,2,3} for i in {1, ..., L_x} and
   j in {1, ..., L_y}. The site (1,1) corresponds to the lower left real space position.
   
   .. math ::
-     (c_{11}, c_{12}, ..., c_{1L_x}, c_{21}, ..., c_{L_xL_y})^T
+     (c_{11}, c_{12}, ..., c_{1L_y}, c_{21}, ..., c_{L_xL_y})^T
      
+     \text{real space}
+     
+     (c_{1L_y} &... c_{L_xL_y})
+                      
+     (c_{11} &... c_{L_x1})
   """
   if (i>L_x or j>L_y):
       raise Exception("Site index should not be greater than samplesize.")
   return alpha + 4*( L_y*(i-1) + j - 1)
 
+def Hamiltonian_visualization(H):
+    """
+    Plot of a sparse matrix.
+
+    Parameters
+    ----------
+    H : scipy.sparse._csr.csr_matrix
+        Hamiltonian.
+
+    Returns
+    -------
+    Figure.
+
+    """
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(15, 15))
+    plt.spy(H, markersize=1)
+    
 def Hamiltonian_soliton_A1u(t, mu, L_x, L_y, Delta, t_J, Phi, L):
     r"""Return the matrix for A1u model in a junction with a superconductor with:
 
@@ -147,24 +170,22 @@ def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, Phi):
     r"""Return the matrix for A1u model in a junction with a superconductor with:
     
        .. math ::
-       \vec{c_{n,m}} = (c_{n,m,\uparrow},
-                        c_{n,m,\downarrow},
-                        c^\dagger_{n,m,\downarrow},
-                        -c^\dagger_{n,m,\uparrow})^T
-       
-       H_{A1u} = \frac{1}{2} \sum_n^{L_x-1} \sum_m^{L_y} (-\mu \vec{c}^\dagger_{n,m} \tau_z\sigma_0  \vec{c}_{n,m}) +
-           \frac{1}{2} \sum_n^{L_x-2} \sum_m^{L_y} \left( \vec{c}^\dagger_{n,m}\left[ 
-            -t\tau_z\sigma_0 -
-            i\frac{\Delta}{2} \tau_x\sigma_x \right] \vec{c}_{n+1,m} + H.c. \right) +
-           \frac{1}{2} \sum_n^{L_x-1} \sum_m^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
-            -t\tau_z\sigma_0 -
-            i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
-     
-        H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}^\dagger(\left(\theta(\frac{L_y}{2}-m)-\theta(m-\frac{L_y}{2})\right)sin(\phi/2)\tau_z\sigma_0+icos(\phi/2)\tau_0\sigma_0)\vec{c}_{L_x,m}+H.c.]
-
-        
-        """
-    M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
+           \vec{c_{n,m}} = (c_{n,m,\uparrow},
+                            c_{n,m,\downarrow},
+                            c^\dagger_{n,m,\downarrow},
+                            -c^\dagger_{n,m,\uparrow})^T
+           
+           H_{A1u} = \frac{1}{2} \sum_{n=1}^{L_x} \sum_{m=1}^{L_y} (-\mu \vec{c}^\dagger_{n,m} \tau_z\sigma_0  \vec{c}_{n,m}) +
+               \frac{1}{2} \sum_{n=1}^{L_x-1} \sum_{m=1}^{L_y} \left( \vec{c}^\dagger_{n,m}\left[ 
+                -t\tau_z\sigma_0 -
+                i\frac{\Delta}{2} \tau_x\sigma_x \right] \vec{c}_{n+1,m} + H.c. \right) +
+               \frac{1}{2} \sum_{n=1}^{L_x-1} \sum_{m=1}^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
+                -t\tau_z\sigma_0 -
+                i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
+         
+            H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}^\dagger(\left(\theta(\frac{L_y}{2}-m)-\theta(m-\frac{L_y}{2})\right)sin(\phi/2)\tau_z\sigma_0+icos(\phi/2)\tau_0\sigma_0)\vec{c}_{L_x,m}+H.c.]
+    """
+    M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*L_x*L_y), dtype=complex)
     onsite_A1u = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta
     for i in range(1, L_x+1):
       for j in range(1, L_y+1):
