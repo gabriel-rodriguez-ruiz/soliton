@@ -12,13 +12,13 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 200
-L_y = 200
+L_x = 800
+L_y = 801
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0  #height of the phase soliton
-t_J = 0   #t/2
+Phi = 0.04*np.pi  #height of the phase soliton around flux pi
+t_J = 1   #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
@@ -169,6 +169,8 @@ ax.set_ylabel("E")
 """
 
 #%% Spinors to txt
+from functions import mean_spin
+
 with open("spinors.txt", "w+") as f:
   data = f.read()
   f.write(f"{params}\n")

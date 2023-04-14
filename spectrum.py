@@ -16,8 +16,8 @@ L_x = 120
 L_y = 120
 t = 1
 Delta = 1
-mu = -1  #-2
-Phi = np.pi  #superconducting phase
+mu = -2  #-2
+Phi = 0.04*np.pi  #superconducting phase
 t_J = 1    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
@@ -86,20 +86,28 @@ ax.set_title("Probability density at the junction")
 ax.legend()
 #%% Plotting vs. Ly
 
-L_y_values = np.linspace(50, 200, 11, dtype=int)
+# L_y_values = np.linspace(50, 200, 11, dtype=int)
+L_y_values = np.linspace(200, 400, 11, dtype=int)
+
 eigenvalues = []
 
 for L_y_value in L_y_values:
     L_x = int(L_y_value)
     L = int(L_y_value//2)
-    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y_value, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+    #H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y_value, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+    H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y_value, Delta=Delta, t_J=t_J, Phi=Phi)
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
     
 fig, ax = plt.subplots()
-ax.plot(L_y_values, [eigenvalues[i][0::2] for i in range(len(L_y_values))], "o", alpha=0.5, markersize=10)
-ax.plot(L_y_values, [eigenvalues[i][0::1] for i in range(len(L_y_values))], "*", alpha=0.5, markersize=5)
+#ax.plot(L_y_values, [eigenvalues[i][0::2] for i in range(len(L_y_values))], "o", alpha=0.5, markersize=10)
+#ax.plot(L_y_values, [eigenvalues[i][0::1] for i in range(len(L_y_values))], "*", alpha=0.5, markersize=5)
+ax.plot(L_y_values, [np.abs(eigenvalues[i][0]) for i in range(len(L_y_values))], "or", alpha=0.5, markersize=5)
+ax.plot(L_y_values, [np.abs(eigenvalues[i][1]) for i in range(len(L_y_values))], "ob", alpha=0.5, markersize=5)
+ax.plot(L_y_values, [np.abs(eigenvalues[i][2]) for i in range(len(L_y_values))], "ok", alpha=0.5, markersize=5)
+ax.plot(L_y_values, [np.abs(eigenvalues[i][3]) for i in range(len(L_y_values))], "oy", alpha=0.5, markersize=5)
+
 ax.set_xlabel(r"$L_y$")
 plt.yscale('log')
 ax.set_ylabel("E")
