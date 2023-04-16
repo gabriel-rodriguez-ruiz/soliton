@@ -46,6 +46,24 @@ def mass(phi, t_J):
     """
     return t_J*np.cos(phi/2)
 
+def localized_solution(y):
+    """
+    Solution of the effective Hamiltonian localized at y=0.
+    I assume Delta=1.
+
+    Parameters
+    ----------
+    y : float
+        Coordinate along the junction.
+
+    Returns
+    -------
+    None.
+    The solution at y.
+    """
+    xi = mass(Phi(epsilon, y), t_J)
+    return np.exp(xi*np.abs(y))
+
 #%% Plotting of flux
 epsilon = 0.04*np.pi
 y = np.linspace(-1, 1)
@@ -68,5 +86,16 @@ ax.set_xlabel("y")
 ax.set_ylabel(r"$m(y)$")
 ax.set_yticks([mass(np.pi-epsilon, t_J), 0, mass(np.pi+epsilon, t_J)],
               [r"$t_J\sin(\epsilon/2)$", r"0", r"$-t_J\sin(\epsilon/2)$"])
+ax.set_xticks([0],["0"])
+fig.tight_layout()
+
+#%% Plotting of the effective solution
+
+fig, ax = plt.subplots()
+ax.plot(y, [localized_solution(y_value) for y_value in y])
+ax.set_xlabel("y")
+ax.set_ylabel(r"$\Psi(y)$")
+# ax.set_yticks([mass(np.pi-epsilon, t_J), 0, mass(np.pi+epsilon, t_J)],
+#               [r"$t_J\sin(\epsilon/2)$", r"0", r"$-t_J\sin(\epsilon/2)$"])
 ax.set_xticks([0],["0"])
 fig.tight_layout()
