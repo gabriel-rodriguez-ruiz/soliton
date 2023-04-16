@@ -12,8 +12,8 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 800
-L_y = 801
+L_x = 200
+L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
