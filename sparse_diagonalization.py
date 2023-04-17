@@ -17,8 +17,8 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.95*np.pi  #height of the phase soliton around flux pi
-t_J = t/2   #t/2
+Phi = 0.25*np.pi  #height of the phase soliton around flux pi
+t_J = t   #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
@@ -75,7 +75,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 1
+index = 3
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -83,9 +83,8 @@ plt.colorbar(image)
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 #ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
-ax.text(5,25, rf'$\Phi={np.round(Phi, 2)}$')
+ax.text(5,25, rf'$\Phi={np.round(Phi, 2)}$; $index={index}$')
 #plt.plot(probability_density[10,:,0])
-plt.tight_layout()
 ax.set_title("Probability density")
 plt.tight_layout()
 
@@ -183,8 +182,10 @@ with open("spinors.txt", "w+") as f:
       f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
       for j in range(4):
           f.write(f"{str(localized_state_center_bottom_left[i].round(4)[j]):30}"+"%    "+
-                  f"{str(localized_state_center_bottom_right[i].round(4)[j])}"+"\n")
+                    f"{str(localized_state_center_bottom_right[i].round(4)[j])}"+"\n")
       f.write("\n\n")
+          
+      
     # for i in range(4):
   #     f.write(f"{i}th-localized state at the top\n")
   #     for j in range(len(localized_state_up[i])):

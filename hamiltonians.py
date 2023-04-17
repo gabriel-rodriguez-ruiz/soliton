@@ -179,7 +179,7 @@ def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, Phi):
                \frac{1}{2} \sum_{n=1}^{L_x-1} \sum_{m=1}^{L_y} \left( \vec{c}^\dagger_{n,m}\left[ 
                 -t\tau_z\sigma_0 -
                 i\frac{\Delta}{2} \tau_x\sigma_x \right] \vec{c}_{n+1,m} + H.c. \right) +
-               \frac{1}{2} \sum_{n=1}^{L_x-1} \sum_{m=1}^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
+               \frac{1}{2} \sum_{n=1}^{L_x} \sum_{m=1}^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
                 -t\tau_z\sigma_0 -
                 i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
          
