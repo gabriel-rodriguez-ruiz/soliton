@@ -17,8 +17,8 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.04*np.pi  #height of the phase soliton around flux pi
-t_J = 1   #t/2
+Phi = 0.95*np.pi  #height of the phase soliton around flux pi
+t_J = t/2   #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
@@ -75,7 +75,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 0
+index = 1
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -95,7 +95,7 @@ ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
 ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
 ax.set_title("Probability density at the junction")
-    #%% Spin determination
+#%% Spin determination
 from functions import mean_spin_xy, get_components
 
 # zero_modes = eigenvectors_sparse

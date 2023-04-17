@@ -17,8 +17,8 @@ L_y = 120
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.04*np.pi  #superconducting phase
-t_J = 1    #t/2
+Phi = 0.4*np.pi  #superconducting phase
+t_J = t/2    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
@@ -33,18 +33,23 @@ eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigm
 
 #%% Plotting vs. Phi
 
-Phi_values = np.linspace(0, np.pi, 30)
+Phi_values = np.linspace(0, 2*np.pi, 30)
 eigenvalues = []
 
 for Phi_value in Phi_values:
-    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value, L=L)
+    # H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value, L=L)
+    H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value)
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
     
 fig, ax = plt.subplots()
-ax.plot(Phi_values, [eigenvalues[i][0::2] for i in range(len(Phi_values))], "o", alpha=0.1)
-ax.plot(Phi_values, [eigenvalues[i][0::1] for i in range(len(Phi_values))], "*", alpha=0.1)
+# ax.plot(Phi_values, [eigenvalues[i][0::2] for i in range(len(Phi_values))], "o", alpha=0.1)
+# ax.plot(Phi_values, [eigenvalues[i][0::1] for i in range(len(Phi_values))], "*", alpha=0.1)
+ax.plot(Phi_values, [np.abs(eigenvalues[i][0]) for i in range(len(Phi_values))], "or", alpha=0.5, markersize=5)
+ax.plot(Phi_values, [np.abs(eigenvalues[i][1]) for i in range(len(Phi_values))], "ob", alpha=0.5, markersize=5)
+ax.plot(Phi_values, [np.abs(eigenvalues[i][2]) for i in range(len(Phi_values))], "ok", alpha=0.5, markersize=5)
+ax.plot(Phi_values, [np.abs(eigenvalues[i][3]) for i in range(len(Phi_values))], "oy", alpha=0.5, markersize=5)
 plt.yscale('log')
 ax.set_xlabel(r"$\Phi$")
 ax.set_ylabel(r"$E$")

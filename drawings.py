@@ -62,7 +62,7 @@ def localized_solution(y):
     The solution at y.
     """
     xi = mass(Phi(epsilon, y), t_J)
-    return np.exp(xi*np.abs(y))
+    return np.exp(xi*y)
 
 #%% Plotting of flux
 epsilon = 0.04*np.pi
@@ -90,12 +90,15 @@ ax.set_xticks([0],["0"])
 fig.tight_layout()
 
 #%% Plotting of the effective solution
-
+y = np.linspace(-100, 100, 10000)
 fig, ax = plt.subplots()
 ax.plot(y, [localized_solution(y_value) for y_value in y])
 ax.set_xlabel("y")
 ax.set_ylabel(r"$\Psi(y)$")
-# ax.set_yticks([mass(np.pi-epsilon, t_J), 0, mass(np.pi+epsilon, t_J)],
-#               [r"$t_J\sin(\epsilon/2)$", r"0", r"$-t_J\sin(\epsilon/2)$"])
+ax.text(-50, 0.75, r"$e^{\frac{t_J}{\Delta}\sin(\epsilon/2)y}$")
+ax.text(50, 0.75, r"$e^{-\frac{t_J}{\Delta}\sin(\epsilon/2)y}$")
+ax.arrow(-50, 0.75, -10-(-50), localized_solution(-10)-0.75)
+ax.arrow(50, 0.75, 10-(50), localized_solution(10)-0.75)
+ax.set_yticks([])
 ax.set_xticks([0],["0"])
 fig.tight_layout()
