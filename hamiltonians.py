@@ -35,24 +35,6 @@ def index(i, j, alpha, L_x, L_y):
   if (i>L_x or j>L_y):
       raise Exception("Site index should not be greater than samplesize.")
   return alpha + 4*( L_y*(i-1) + j - 1)
-
-def Hamiltonian_visualization(H):
-    """
-    Plot of a sparse matrix.
-
-    Parameters
-    ----------
-    H : scipy.sparse._csr.csr_matrix
-        Hamiltonian.
-
-    Returns
-    -------
-    Figure.
-
-    """
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(15, 15))
-    plt.spy(H, markersize=1)
     
 def Hamiltonian_soliton_A1u(t, mu, L_x, L_y, Delta, t_J, Phi, L):
     r"""Return the matrix for A1u model in a junction with a superconductor with:
