@@ -12,23 +12,23 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 280
-L_y = 280
+L_x = 200
+L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
 Phi = 0.1*np.pi  #height of the phase soliton around flux pi
 t_J = t   #t/2
-L = L_y//2
+L = 30      #L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
 phi = 0
 
 #H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-#H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
+H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+#H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 #H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
@@ -75,7 +75,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 2
+index = 4
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -89,11 +89,13 @@ ax.set_title("Probability density")
 plt.tight_layout()
 
 fig, ax = plt.subplots()
-ax.plot(probability_density[index][:, L_x//2])
+ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2])
+#ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
 ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
 ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
 ax.set_title("Probability density at the junction")
+
 #%% Spin determination
 from functions import mean_spin_xy, get_components
 
@@ -152,6 +154,7 @@ plt.semilogy(np.abs(eigenvalues_sparse), "o")
 ax.set_xlabel("Label of eingevalue")
 ax.set_ylabel("Absolute value of energy")
 plt.tight_layout()
+plt.title(r"{$\Phi=$"+f"{np.round(Phi, 2)}")
 
 #%% Phi spectrum
 """
@@ -174,21 +177,21 @@ with open("spinors.txt", "w+") as f:
   data = f.read()
   f.write(f"{params}\n")
   f.write(f"energies={eigenvalues_sparse}\n\n")
+  # for i in range(4):
+  #     f.write(f"{i}th-localized state at the center\n\n")
+  #     for j in range(4):
+  #         f.write(f"{str(localized_state_center_upper_left[i].round(4)[j]):30}"+"%    "+
+  #                 f"{str(localized_state_center_upper_right[i].round(4)[j])}"+"\n")
+  #     f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+  #     for j in range(4):
+  #         f.write(f"{str(localized_state_center_bottom_left[i].round(4)[j]):30}"+"%    "+
+  #                   f"{str(localized_state_center_bottom_right[i].round(4)[j])}"+"\n")
+  #     f.write("\n\n")
+
   for i in range(4):
-      f.write(f"{i}th-localized state at the center\n\n")
-      for j in range(4):
-          f.write(f"{str(localized_state_center_upper_left[i].round(4)[j]):30}"+"%    "+
-                  f"{str(localized_state_center_upper_right[i].round(4)[j])}"+"\n")
-      f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
-      for j in range(4):
-          f.write(f"{str(localized_state_center_bottom_left[i].round(4)[j]):30}"+"%    "+
-                    f"{str(localized_state_center_bottom_right[i].round(4)[j])}"+"\n")
-      f.write("\n\n")
-          
-      
-    # for i in range(4):
-  #     f.write(f"{i}th-localized state at the top\n")
-  #     for j in range(len(localized_state_up[i])):
-  #         f.write(str(localized_state_up[i].round(4)[j])+"\n")
-   
+      f.write(f"{i}th-localized state at the top\n")
+      for j in range(len(localized_state_up[i])):
+          f.write(str(localized_state_up[i].round(4)[j])+"\n")
+      f.write("\n")
+
   
