@@ -102,3 +102,13 @@ ax.arrow(50, 0.75, 10-(50), localized_solution(10)-0.75)
 ax.set_yticks([])
 ax.set_xticks([0],["0"])
 fig.tight_layout()
+
+#%% Plotting of mass with tanh
+
+epsilon = 0.1
+t_J = 1
+mu = 1
+y = np.linspace(0, 10)
+fig, ax = plt.subplots()
+ax.plot(y, [-t_J*np.sin( (epsilon*np.tanh(mu/2*(y_value-5)))/2 ) for y_value in y])
+
