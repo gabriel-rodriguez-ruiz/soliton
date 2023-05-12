@@ -79,7 +79,7 @@ def psi_2_prime_plus(y, kappa, m_0, Delta, L):
     if y<=0:
         return -np.sqrt((1-alpha)/(1+alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
     elif (y>0 and y<=L):
-        return np.exp(kappa*L)*C_L*((alpha-1)**2*np.exp(kappa*(y-L)) - (alpha+1)*np.exp(-kappa*(y+L)) )
+        return -C_L*(np.sqrt(1-alpha**2)*np.exp(kappa*(y-L)) - np.sqrt((1-alpha)/(1+alpha))*np.exp(-kappa*(y+L)) )
     else:
         return -np.sqrt((1+alpha)/(1-alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
 
@@ -89,9 +89,9 @@ def psi_2_prime_minus(y, kappa, m_0, Delta, L):
     if y<=0:
         return np.sqrt((1-alpha)/(1+alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
     elif (y>0 and y<=L):
-        return -np.exp(kappa*L)*C_L*((alpha-1)**2*np.exp(kappa*(y-L)) - (alpha+1)*np.exp(-kappa*(y+L)) )
+        return C_L*(np.sqrt(1-alpha**2)*np.exp(kappa*(y-L)) - np.sqrt((1-alpha)/(1+alpha))*np.exp(-kappa*(y+L)) )
     else:
-        return +np.sqrt((1+alpha)/(1-alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
+        return np.sqrt((1+alpha)/(1-alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
 
 
 y = np.linspace(-2*L, 2*L+L, 1000)
@@ -107,9 +107,13 @@ def psi_3_plus(y, kappa, m_0, Delta, L):
 def psi_3_minus(y, kappa, m_0, Delta, L):
     return 1/2*(-psi_1_prime(y, kappa, m_0, Delta, L) + 1j*psi_2_prime_minus(y, kappa, m_0, Delta, L))
 
-ax.plot(y, [np.real(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.imag(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+#ax.plot(y, [np.real(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.imag(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
 ax.plot(y, [np.abs(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.real(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.imag(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+ax.plot(y, [np.abs(psi_1_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.real(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.imag(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
 ax.plot(y, [np.abs(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+ax.plot(y, [np.abs(psi_3_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+#ax.plot(y, [psi_2_prime_plus(y_value, kappa, m_0, Delta, L) for y_value in y])
+
