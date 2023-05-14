@@ -10,9 +10,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import root
 
-Delta = 100
-m_0 = 10
-L = 20
+# Delta = 100
+# m_0 = 10
+# L = 20
+
+Phi = 0.1*np.pi  #height of the phase soliton around flux pi
+t_J = 1   #t/2
+m_0 = t_J*np.sin(Phi/2)
+L = 30      #L_y//2
+Delta = 1
+
 
 def trascendental_equation(k, m_0, Delta, L):
     """
@@ -94,7 +101,7 @@ def psi_2_prime_minus(y, kappa, m_0, Delta, L):
         return np.sqrt((1+alpha)/(1-alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
 
 
-y = np.linspace(-2*L, 2*L+L, 1000)
+y = np.linspace(-100+L/2, 100+L/2, 1000)
 fig, ax = plt.subplots()
 #ax.plot(y, [psi_1_prime(y_value, kappa, m_0, Delta, L) for y_value in y])
 
@@ -102,18 +109,31 @@ def psi_1_plus(y, kappa, m_0, Delta, L):
     return 1/2*(-1j*psi_1_prime(y, kappa, m_0, Delta, L) + psi_2_prime_plus(y, kappa, m_0, Delta, L))
 def psi_1_minus(y, kappa, m_0, Delta, L):
     return 1/2*(-1j*psi_1_prime(y, kappa, m_0, Delta, L) + psi_2_prime_minus(y, kappa, m_0, Delta, L))
+def psi_2_plus(y, kappa, m_0, Delta, L):
+    return 1/2*(psi_1_prime(y, kappa, m_0, Delta, L) -1j* psi_2_prime_plus(y, kappa, m_0, Delta, L))
+def psi_2_minus(y, kappa, m_0, Delta, L):
+    return 1/2*(psi_1_prime(y, kappa, m_0, Delta, L) -1j* psi_2_prime_minus(y, kappa, m_0, Delta, L))
 def psi_3_plus(y, kappa, m_0, Delta, L):
     return 1/2*(-psi_1_prime(y, kappa, m_0, Delta, L) + 1j*psi_2_prime_plus(y, kappa, m_0, Delta, L))
 def psi_3_minus(y, kappa, m_0, Delta, L):
     return 1/2*(-psi_1_prime(y, kappa, m_0, Delta, L) + 1j*psi_2_prime_minus(y, kappa, m_0, Delta, L))
+def psi_4_plus(y, kappa, m_0, Delta, L):
+    return 1/2*(1j*psi_1_prime(y, kappa, m_0, Delta, L) - psi_2_prime_plus(y, kappa, m_0, Delta, L))
+def psi_4_minus(y, kappa, m_0, Delta, L):
+    return 1/2*(1j*psi_1_prime(y, kappa, m_0, Delta, L) - psi_2_prime_minus(y, kappa, m_0, Delta, L))
 
-#ax.plot(y, [np.real(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-# ax.plot(y, [np.imag(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.abs(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.abs(psi_1_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-# ax.plot(y, [np.real(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-# ax.plot(y, [np.imag(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.abs(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-ax.plot(y, [np.abs(psi_3_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-#ax.plot(y, [psi_2_prime_plus(y_value, kappa, m_0, Delta, L) for y_value in y])
+def psi_plus(y, kappa, m_0, Delta, L):
+    return 1/2*np.array([psi_1_plus(y, kappa, m_0, Delta, L), psi_2_plus(y, kappa, m_0, Delta, L), psi_3_plus(y, kappa, m_0, Delta, L), psi_4_plus(y, kappa, m_0, Delta, L)])
+
+# ax.plot(y, [np.abs(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_1_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_3_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_3_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_2_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_2_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_4_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+# ax.plot(y, [np.abs(psi_4_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+
+ax.plot(y, [np.linalg.norm(psi_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
+
 
