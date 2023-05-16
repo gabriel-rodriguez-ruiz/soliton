@@ -12,13 +12,13 @@ from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse
 from functions import get_components
 import scipy
 
-L_x = 120
-L_y = 120
+L_x = 200
+L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.4*np.pi  #superconducting phase
-t_J = t/2    #t/2
+Phi = 0.1*np.pi  #superconducting phase
+t_J = t    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
@@ -116,3 +116,53 @@ ax.plot(L_y_values, [np.abs(eigenvalues[i][3]) for i in range(len(L_y_values))],
 ax.set_xlabel(r"$L_y$")
 plt.yscale('log')
 ax.set_ylabel("E")
+
+#%% Plotting E vs. L
+L_x = 200
+L_y = 200
+t = 1
+Delta = 1
+mu = -2  #-2
+Phi = 0.2*np.pi  #superconducting phase
+t_J = t    #t/2
+k = 4
+
+L_values = np.linspace(30, 50, 11, dtype=int)
+
+eigenvalues = []
+
+for L_value in L_values:
+    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L_value)    
+    eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
+    eigenvalues_sparse.sort()
+    eigenvalues.append(eigenvalues_sparse)
+    
+fig, ax = plt.subplots()
+#ax.plot(L_y_values, [eigenvalues[i][0::2] for i in range(len(L_y_values))], "o", alpha=0.5, markersize=10)
+#ax.plot(L_y_values, [eigenvalues[i][0::1] for i in range(len(L_y_values))], "*", alpha=0.5, markersize=5)
+#ax.plot(L_values, [eigenvalues[i][0] for i in range(len(L_values))], "or", alpha=0.5, markersize=5)
+# ax.plot(L_values, [eigenvalues[i][1] for i in range(len(L_values))], "ob", alpha=0.5, markersize=5)
+ax.plot(L_values, [eigenvalues[i][2] for i in range(len(L_values))], ".k", alpha=0.5, markersize=5, label="Numerical")
+# ax.plot(L_values, [np.abs(eigenvalues[i][3]) for i in range(len(L_values))], "oy", alpha=0.5, markersize=5)
+
+ax.set_xlabel(r"$L$")
+#plt.yscale('log')
+ax.set_ylabel("E")
+plt.tight_layout()
+
+from analytical_solution import Kappa
+
+m_0 = t_J*np.sin(Phi/2)
+
+def positive_energy(L, m_0):
+    kappa_value = Kappa(m_0=m_0, Delta=Delta, L=L_value)
+    return m_0/2*np.exp(-kappa_value*L)
+
+E = []
+for L_value in L_values:
+    Energy = positive_energy(L=L_value, m_0=m_0)
+    E.append(Energy)
+
+ax.plot(L_values, [E[i] for i in range(len(L_values))], "+k", alpha=0.5, markersize=5, label="Analytical")
+
+ax.legend()
