@@ -17,7 +17,7 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.1*np.pi  #superconducting phase
+Phi = 0.01*np.pi  #superconducting phase
 t_J = t    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
@@ -123,11 +123,11 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.2*np.pi  #superconducting phase
+Phi = 0.1*np.pi  #superconducting phase
 t_J = t    #t/2
-k = 4
+k = 12
 
-L_values = np.linspace(30, 50, 11, dtype=int)
+L_values = np.linspace(10, 50, 11, dtype=int)
 
 eigenvalues = []
 
@@ -136,19 +136,25 @@ for L_value in L_values:
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
-    
+
+index = np.arange(k)
+E_numerical = []
+for j in index:
+    E_numerical.append(np.array([eigenvalues[i][j] for i in range(len(L_values))]))
 fig, ax = plt.subplots()
 #ax.plot(L_y_values, [eigenvalues[i][0::2] for i in range(len(L_y_values))], "o", alpha=0.5, markersize=10)
 #ax.plot(L_y_values, [eigenvalues[i][0::1] for i in range(len(L_y_values))], "*", alpha=0.5, markersize=5)
 #ax.plot(L_values, [eigenvalues[i][0] for i in range(len(L_values))], "or", alpha=0.5, markersize=5)
 # ax.plot(L_values, [eigenvalues[i][1] for i in range(len(L_values))], "ob", alpha=0.5, markersize=5)
-ax.plot(L_values, [eigenvalues[i][2] for i in range(len(L_values))], ".k", alpha=0.5, markersize=5, label="Numerical")
+ax.plot(L_values, E_numerical[6], "o", label="Numerical")
+ax.plot(L_values, E_numerical[8], "o", label="Numerical")
+ax.plot(L_values, E_numerical[10], "o", label="Numerical")
+
 # ax.plot(L_values, [np.abs(eigenvalues[i][3]) for i in range(len(L_values))], "oy", alpha=0.5, markersize=5)
 
 ax.set_xlabel(r"$L$")
 #plt.yscale('log')
 ax.set_ylabel("E")
-plt.tight_layout()
 
 from analytical_solution import Kappa
 
@@ -161,8 +167,19 @@ def positive_energy(L, m_0):
 E = []
 for L_value in L_values:
     Energy = positive_energy(L=L_value, m_0=m_0)
-    E.append(Energy)
+    E.append(Energy[0])
 
-ax.plot(L_values, [E[i] for i in range(len(L_values))], "+k", alpha=0.5, markersize=5, label="Analytical")
+E_analytical = np.array([E[i] for i in range(len(L_values))])
+ax.plot(L_values, E_analytical, "ok", label="Analytical")
+plt.yscale('log')
 
+#%% Least square fitting
+
+m_numerical, b_numerical = np.polyfit(L_values, np.log(E_numerical[0]), 1)
+m_analytical, b_analytical = np.polyfit(L_values, np.log(E_analytical), 1)
+
+ax.plot(L_values, np.exp(m_numerical*L_values + b_numerical), label=f"{m_numerical:.3}L{b_numerical:.3}")
+ax.plot(L_values, np.exp(m_analytical*L_values + b_analytical), label=f"{m_analytical:.3}L{b_analytical:.3}")
 ax.legend()
+plt.title(r"$\Phi=$"+f"{Phi:.2}, Delta={Delta}")
+plt.tight_layout()
