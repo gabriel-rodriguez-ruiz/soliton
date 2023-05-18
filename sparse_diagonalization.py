@@ -15,7 +15,7 @@ import scipy
 L_x = 200
 L_y = 200
 t = 1
-Delta = 2
+Delta = 1
 mu = -2  #-2
 Phi = 0.1*np.pi  #height of the phase soliton around flux pi
 t_J = t   #t/2
@@ -75,7 +75,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 4
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)

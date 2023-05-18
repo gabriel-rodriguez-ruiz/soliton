@@ -121,13 +121,13 @@ ax.set_ylabel("E")
 L_x = 200
 L_y = 200
 t = 1
-Delta = 1
+Delta = 2
 mu = -2  #-2
 Phi = 0.1*np.pi  #superconducting phase
 t_J = t    #t/2
 k = 12
 
-L_values = np.linspace(10, 50, 11, dtype=int)
+L_values = np.linspace(10, 50, 20, dtype=int)
 
 eigenvalues = []
 

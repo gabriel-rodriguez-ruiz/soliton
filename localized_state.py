@@ -18,12 +18,12 @@ from scipy.optimize import root
 Phi = 0.1*np.pi  #height of the phase soliton around flux pi
 t_J = 1   #t/2
 m_0 = t_J*np.sin(Phi/2)
-L = 15      #L_y//2
+L = 30      #L_y//2
 Delta = 2
 
 # Numerical parameters
 L_x = 200
-L_y = 400
+L_y = 200
 t = 1
 mu = -2  #-2
 k = 8   #number of eigenvalues
@@ -187,7 +187,7 @@ plt.tight_layout()
 probability_density_at_junction_left = Probability_density[index][:, L_x//2-1]/np.sum(Probability_density[index][:, L_x//2-1])
 
 fig, ax = plt.subplots()
-ax.plot(y , probability_density_at_junction_left, label="Numerical")
+ax.plot(y , probability_density_at_junction_left, "or", label="Numerical", markersize=4)
 probability_density_analytical = np.array([np.linalg.norm(psi_left_plus(y_value, kappa, m_0, Delta, L))**2 for y_value in y])
 ax.plot(y, probability_density_analytical, label="Analytical")
 ax.set_xlabel("y")
