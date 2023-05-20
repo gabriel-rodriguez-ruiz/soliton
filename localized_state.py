@@ -111,7 +111,10 @@ def psi_2_prime_minus(y, kappa, m_0, Delta, L):
 
 y = np.arange(-L_y//2+L//2, L_y//2+L//2)
 fig, ax = plt.subplots()
-# ax.plot(y, [psi_1_prime(y_value, kappa, m_0, Delta, L) for y_value in y])
+ax.plot(y, [psi_1_prime(y_value, kappa, m_0, Delta, L) for y_value in y])
+ax.plot(y, [psi_2_prime_plus(y_value, kappa, m_0, Delta, L) for y_value in y])
+ax.plot(y, [psi_2_prime_minus(y_value, kappa, m_0, Delta, L) for y_value in y])
+
 
 def psi_1_plus(y, kappa, m_0, Delta, L):
     return 1/2*(-1j*psi_1_prime(y, kappa, m_0, Delta, L) + psi_2_prime_plus(y, kappa, m_0, Delta, L))

@@ -18,8 +18,8 @@ t = 1
 Delta = 1
 mu = -2  #-2
 Phi = 0.1*np.pi  #height of the phase soliton around flux pi
-t_J = t   #t/2
-L = 50      #L_y//2
+t_J = 1   #t
+L = 30      #L_y//2
 k = 8   #number of eigenvalues
 Delta_Z = 0
 theta = np.pi/2
@@ -37,27 +37,19 @@ eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigm
 index = np.arange(k)   #which zero mode (less than k)
 probability_density = []
 zero_state = []
-localized_state_up = [] # it is the site ((L_x+L)/2, L_y/2)
-localized_state_down = []
-localized_state_center_upper_left = []
-localized_state_center_upper_right = []
-localized_state_center_bottom_left = []
-localized_state_center_bottom_right = []
-localized_state_bottom_edge_middle = []
-localized_state_left_edge_middle = []
+localized_state_upper_left = [] # it is the site (L_x/2-1, (L_y+L)/2)
+localized_state_upper_right = [] # it is the site (L_x/2, (L_y+L)/2)
+localized_state_bottom_left = [] # it is the site (L_x/2-1, (L_y-L)/2)
+localized_state_bottom_right = [] # it is the site (L_x/2, (L_y-L)/2)
 
 for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
     probability_density.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)/(np.linalg.norm(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)))
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
-    localized_state_down.append(zero_state[i][(L_y-L)//2, L_x//2,:])
-    localized_state_up.append(zero_state[i][(L_y+L)//2, L_x//2,:])
-    localized_state_center_upper_left.append(zero_state[i][L_y//2, L_x//2-1,:])
-    localized_state_center_upper_right.append(zero_state[i][L_y//2, L_x//2,:])
-    localized_state_center_bottom_left.append(zero_state[i][L_y//2-1, L_x//2-1,:])
-    localized_state_center_bottom_right.append(zero_state[i][L_y//2-1, L_x//2,:])
-    localized_state_bottom_edge_middle.append(zero_state[i][0, L_x//2,:])
-    localized_state_left_edge_middle.append(zero_state[i][L_y//2, 0,:])
+    localized_state_upper_left.append(zero_state[i][(L_y+L)//2, L_x//2-1,:])
+    localized_state_upper_right.append(zero_state[i][(L_y+L)//2, L_x//2,:])
+    localized_state_bottom_left.append(zero_state[i][(L_y-L)//2, L_x//2-1,:])
+    localized_state_bottom_right.append(zero_state[i][(L_y-L)//2, L_x//2,:])
 
 #%% Plotting of probability density
 
@@ -173,25 +165,26 @@ ax.set_ylabel("E")
 #%% Spinors to txt
 from functions import mean_spin
 
+index = range(0,4)
+
 with open("spinors.txt", "w+") as f:
-  data = f.read()
-  f.write(f"{params}\n")
-  f.write(f"energies={eigenvalues_sparse}\n\n")
-  # for i in range(4):
-  #     f.write(f"{i}th-localized state at the center\n\n")
-  #     for j in range(4):
-  #         f.write(f"{str(localized_state_center_upper_left[i].round(4)[j]):30}"+"%    "+
-  #                 f"{str(localized_state_center_upper_right[i].round(4)[j])}"+"\n")
-  #     f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
-  #     for j in range(4):
-  #         f.write(f"{str(localized_state_center_bottom_left[i].round(4)[j]):30}"+"%    "+
-  #                   f"{str(localized_state_center_bottom_right[i].round(4)[j])}"+"\n")
-  #     f.write("\n\n")
-
-  for i in range(4):
-      f.write(f"{i}th-localized state at the top\n")
-      for j in range(len(localized_state_up[i])):
-          f.write(str(localized_state_up[i].round(4)[j])+"\n")
-      f.write("\n")
-
+    data = f.read()
+    f.write(f"{params}\n")
+    f.write(f"energies={eigenvalues_sparse}\n\n")
+    for i in index:
+        f.write(f"{i}th-localized state at the upper soliton\n\n")
+        for j in range(4):
+            f.write(f"{str(localized_state_upper_left[i].round(4)[j]):30}"+"%    "+
+                    f"{str(localized_state_upper_right[i].round(4)[j])}"+"\n")
+        f.write("\n")
+        f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+    f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+    f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
+    for i in index:
+        f.write(f"{i}th-localized state at the bottom soliton\n\n")
+        for j in range(4):
+            f.write(f"{str(localized_state_bottom_left[i].round(4)[j]):30}"+"%    "+
+                    f"{str(localized_state_bottom_right[i].round(4)[j])}"+"\n")
+        f.write("\n")
+        f.write("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n")
   
