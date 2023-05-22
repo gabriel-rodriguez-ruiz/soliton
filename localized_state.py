@@ -19,14 +19,14 @@ Phi = 0.1*np.pi  #height of the phase soliton around flux pi
 t_J = 1   #t/2
 m_0 = t_J*np.sin(Phi/2)
 L = 30      #L_y//2
-Delta = 2
+Delta = 1
 
 # Numerical parameters
 L_x = 200
 L_y = 200
 t = 1
 mu = -2  #-2
-k = 8   #number of eigenvalues
+k = 4   #number of eigenvalues
 
 
 def trascendental_equation(k, m_0, Delta, L):
@@ -89,25 +89,10 @@ def psi_1_prime(y, kappa, m_0, Delta, L):
         return C_L*((alpha-1)*np.exp(kappa*L) + np.exp(-kappa*L)) * np.exp(-kappa*y)
 
 def psi_2_prime_plus(y, kappa, m_0, Delta, L):
-    alpha = kappa*Delta/m_0
-    C_L = np.sqrt(kappa/(2*(1-alpha)*(alpha**2-np.exp(-2*kappa*L)*kappa*L)))
-    if y<=0:
-        return -np.sqrt((1-alpha)/(1+alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
-    elif (y>0 and y<=L):
-        return -C_L*(np.sqrt(1-alpha**2)*np.exp(kappa*(y-L)) - np.sqrt((1-alpha)/(1+alpha))*np.exp(-kappa*(y+L)) )
-    else:
-        return -np.sqrt((1+alpha)/(1-alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
+    return -psi_1_prime(-y+L, kappa, m_0, Delta, L)
 
 def psi_2_prime_minus(y, kappa, m_0, Delta, L):
-    alpha = kappa*Delta/m_0
-    C_L = np.sqrt(kappa/(2*(1-alpha)*(alpha**2-np.exp(-2*kappa*L)*kappa*L)))
-    if y<=0:
-        return np.sqrt((1-alpha)/(1+alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
-    elif (y>0 and y<=L):
-        return C_L*(np.sqrt(1-alpha**2)*np.exp(kappa*(y-L)) - np.sqrt((1-alpha)/(1+alpha))*np.exp(-kappa*(y+L)) )
-    else:
-        return np.sqrt((1+alpha)/(1-alpha))*psi_1_prime(y, kappa, m_0, Delta, L)
-
+    return psi_1_prime(-y+L, kappa, m_0, Delta, L)
 
 y = np.arange(-L_y//2+L//2, L_y//2+L//2)
 fig, ax = plt.subplots()
@@ -133,17 +118,14 @@ def psi_4_plus(y, kappa, m_0, Delta, L):
 def psi_4_minus(y, kappa, m_0, Delta, L):
     return 1/2*(1j*psi_1_prime(y, kappa, m_0, Delta, L) - psi_2_prime_minus(y, kappa, m_0, Delta, L))
 
-def psi_plus(y, kappa, m_0, Delta, L):
-    return 1/2*np.array([psi_1_plus(y, kappa, m_0, Delta, L), psi_2_plus(y, kappa, m_0, Delta, L), psi_3_plus(y, kappa, m_0, Delta, L), psi_4_plus(y, kappa, m_0, Delta, L)])
-
-def psi_left_plus(y, kappa, m_0, Delta, L):
+def psi_down_minus_right(y, kappa, m_0, Delta, L):
     r"""
-    Positive energy wavefunction for the left part of the junction in the fermionic base.
+    Negative energy wavefunction for the right edge (left junction) in the fermionic base.
     The normalization is 1.
     .. math ::
-        (c_{l_\uparrow}, c_{l_\downarrow}, c^\dagger_{l_\downarrow}, -c^\dagger_{l_\uparrow})
+        (c_{r_\uparrow}, c_{r_\downarrow}, c^\dagger_{r_\downarrow}, -c^\dagger_{r_\uparrow})
     """
-    return 1/np.sqrt(2)*np.array([psi_1_plus(y, kappa, m_0, Delta, L), psi_2_plus(y, kappa, m_0, Delta, L), -1j*psi_2_plus(y, kappa, m_0, Delta, L), -1j*psi_1_plus(y, kappa, m_0, Delta, L)])
+    return 1/np.sqrt(2)*np.array([0, -1*psi_1_minus(y, kappa, m_0, Delta, L)[0], -1j*psi_1_minus(y, kappa, m_0, Delta, L)[0], 0])
 
 # ax.plot(y, [np.abs(psi_1_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
 # ax.plot(y, [np.abs(psi_1_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
@@ -153,8 +135,6 @@ def psi_left_plus(y, kappa, m_0, Delta, L):
 # ax.plot(y, [np.abs(psi_2_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
 # ax.plot(y, [np.abs(psi_4_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
 # ax.plot(y, [np.abs(psi_4_minus(y_value, kappa, m_0, Delta, L)) for y_value in y])
-
-ax.plot(y, [np.linalg.norm(psi_plus(y_value, kappa, m_0, Delta, L)) for y_value in y])
 
 #%% Sparse diagonalization
 from hamiltonians import Hamiltonian_soliton_A1u_sparse
@@ -166,16 +146,34 @@ from functions import get_components
 H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
+idx = eigenvalues_sparse.argsort()
+eigenvalues_sparse = eigenvalues_sparse[idx]
+eigenvectors_sparse = eigenvectors_sparse[:, idx]
+
 index = np.arange(k)   #which zero mode (less than k)
-Probability_density = []
+probability_density = []
+zero_state = []
+localized_state_upper_left = [] # it is the site (L_x/2-1, (L_y+L)/2)
+localized_state_upper_right = [] # it is the site (L_x/2, (L_y+L)/2)
+localized_state_bottom_left = [] # it is the site (L_x/2-1, (L_y-L)/2)
+localized_state_bottom_right = [] # it is the site (L_x/2, (L_y-L)/2)
+localized_state_left = []
+localized_state_right = []
 
 for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
-    Probability_density.append(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)
+    probability_density.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)/(np.linalg.norm(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)))
+    zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
+    localized_state_upper_left.append(zero_state[i][(L_y+L)//2, L_x//2-1,:])
+    localized_state_upper_right.append(zero_state[i][(L_y+L)//2, L_x//2,:])
+    localized_state_bottom_left.append(zero_state[i][(L_y-L)//2, L_x//2-1,:])
+    localized_state_bottom_right.append(zero_state[i][(L_y-L)//2, L_x//2,:])
+    localized_state_left.append(zero_state[i][:, L_x//2-1,:])
+    localized_state_right.append(zero_state[i][:, L_x//2,:])
 
-index = 4
+index = 0
 fig, ax = plt.subplots()
-image = ax.imshow(Probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
+image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
 #ax.set_title(f"{params}")
 ax.set_xlabel("x")
@@ -187,14 +185,37 @@ ax.set_title("Probability density")
 plt.tight_layout()
 
 # probability_density_at_junction_left = probability_density[index][:, L_x//2-1]
-probability_density_at_junction_left = Probability_density[index][:, L_x//2-1]/np.sum(Probability_density[index][:, L_x//2-1])
+probability_density_at_junction_left = probability_density[index][:, L_x//2-1]/np.sum(probability_density[index][:, L_x//2-1])
 
 fig, ax = plt.subplots()
 ax.plot(y , probability_density_at_junction_left, "or", label="Numerical", markersize=4)
-probability_density_analytical = np.array([np.linalg.norm(psi_left_plus(y_value, kappa, m_0, Delta, L))**2 for y_value in y])
+probability_density_analytical = np.array([np.linalg.norm(psi_down_minus_right(y_value, kappa, m_0, Delta, L))**2 for y_value in y])
 ax.plot(y, probability_density_analytical, label="Analytical")
 ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
 ax.set_title(f"Probability density at the junction with L={L}, Phi={Phi:.2}, alpha={alpha[0]} and Delta={Delta}")
 ax.legend()
 plt.tight_layout()
+
+#%% Spin determination
+from functions import mean_spin_xy
+spin = []
+for i in range(k):
+    spin.append(mean_spin_xy(zero_state[i]))
+
+#%% down minus left
+# Las definiciones de cada componente cambian en cada corrida
+down_minus_left_particle = localized_state_left[0][:,1]
+down_minus_left_hole = localized_state_left[0][:,2]
+
+fig, ax = plt.subplots()
+y = np.arange(-L_y//2+L//2, L_y//2+L//2)
+ax.plot(y, np.real(down_minus_left_particle), label="Real numerical")
+ax.plot(y, np.imag(down_minus_left_particle), label="Imaginary numerical")
+
+phase = 1
+down_minus_right_particle_analytical = [phase*(-1)/(np.sqrt(2))*psi_1_minus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(down_minus_right_particle_analytical), label="Real analytical")
+ax.plot(y, np.imag(down_minus_right_particle_analytical), label="Imaginary analytical")
+ax.legend()
+
