@@ -205,17 +205,16 @@ for i in range(k):
 
 #%% down minus left
 # Las definiciones de cada componente cambian en cada corrida
-down_minus_left_particle = localized_state_left[0][:,1]
-down_minus_left_hole = localized_state_left[0][:,2]
+up_plus_left_particle = np.array(localized_state_left[2][:,0])
+up_plus_right_particle = np.array(localized_state_right[2][:,0])
 
 fig, ax = plt.subplots()
 y = np.arange(-L_y//2+L//2, L_y//2+L//2)
-ax.plot(y, np.real(down_minus_left_particle), label="Real numerical")
-ax.plot(y, np.imag(down_minus_left_particle), label="Imaginary numerical")
+ax.plot(y, np.real(up_plus_left_particle), "--", label="Real numerical")
+ax.plot(y, np.imag(up_plus_left_particle), "--", label="Imaginary numerical")
 
-phase = 1
-down_minus_right_particle_analytical = [phase*(-1)/(np.sqrt(2))*psi_1_minus(y_value, kappa, m_0, Delta, L) for y_value in y]
-ax.plot(y, np.real(down_minus_right_particle_analytical), label="Real analytical")
-ax.plot(y, np.imag(down_minus_right_particle_analytical), label="Imaginary analytical")
+phase = 1j*np.exp(1j*(-0.1+np.angle(up_plus_left_particle[(L_y-L)//2]) + np.pi/2))
+up_plus_right_particle_analytical = [phase/np.sqrt(2)*psi_3_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(up_plus_right_particle_analytical), label="Real analytical")
+ax.plot(y, np.imag(up_plus_right_particle_analytical), label="Imaginary analytical")
 ax.legend()
-
