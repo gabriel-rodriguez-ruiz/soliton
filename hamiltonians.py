@@ -79,16 +79,22 @@ def Hamiltonian_soliton_A1u(t, mu, L_x, L_y, Delta, t_J, Phi, L):
         for alpha in range(4):
           for beta in range(4):
             M[index(i, j, alpha, L_x, L_y), index(i, j+1, beta, L_x, L_y)] = hopping_y_A1u[alpha, beta]
-    hopping_junction_x = t_J/2 * (np.cos(Phi/2)*np.kron(tau_0, sigma_0) + 1j*np.sin(Phi/2)*np.kron(tau_z, sigma_0))
+    hopping_junction_x_far_away = t_J/2 * (-np.sin(Phi/2)*np.kron(tau_z, sigma_0) + 1j*np.sin(Phi/2)*np.kron(tau_0, sigma_0))
+    hopping_junction_x_middle = t_J/2 * (np.sin(Phi/2)*np.kron(tau_z, sigma_0) + 1j*np.sin(Phi/2)*np.kron(tau_0, sigma_0))
+    hopping_junction_x_zero = t_J/2 * 1j*np.sin(Phi/2)*np.kron(tau_0, sigma_0)
     for j in range(1, L_y+1): 
       for alpha in range(4):
         for beta in range(4):
-            if j<=(L_y-L)//2:
-                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
-            elif j>(L_y-L)//2 and j<=(L_y+L)//2:
-                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta].conj()
+            if j<(L_y-L)//2:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x_far_away[alpha, beta]
+            elif j==(L_y-L)//2:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x_zero[alpha, beta]
+            elif j>(L_y-L)//2 and j<(L_y+L)//2:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x_middle[alpha, beta]
+            elif j==(L_y+L)//2:
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x_zero[alpha, beta]
             else:
-                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
+                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x_far_away[alpha, beta]
     return M + M.conj().T
 
 def Hamiltonian_soliton_A1u_sparse(t, mu, L_x, L_y, Delta, t_J, Phi, L):
@@ -378,3 +384,46 @@ def Hamiltonian_A1u_S_double_soliton(t, mu, L_x, L_y, Delta, t_J, Phi, L):
             else:
                 M[index(L_x-1, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
     return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def charge_conjugation_operator(L_x, L_y):
+    """
+    Return the charge conjugation operator.
+    """
+    M = np.zeros((4*L_x*L_y, 4*L_x*L_y), dtype=complex)
+    C = np.kron(tau_y, sigma_y)     #charge conjugation operator
+    for i in range(1, L_x+1):
+      for j in range(1, L_y+1):
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = C[alpha, beta]   
+    return M
+
+def charge_conjugation_operator_sparse(L_x, L_y):
+    """
+    Return the charge conjugation operator in a sparse way.
+    """
+    M = scipy.sparse.lil_matrix((4*L_x*L_y, 4*L_x*L_y), dtype=complex)
+    C = np.kron(tau_y, sigma_y)     #charge conjugation operator
+    for i in range(1, L_x+1):
+      for j in range(1, L_y+1):
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = C[alpha, beta]   
+    return M
+
+def charge_conjugation(H, L_x, L_y):
+    """
+    Check if charge conjugation is present.
+
+    Parameters
+    ----------
+    H : ndarray
+        H_BdG Hamiltonian.
+
+    Returns
+    -------
+    True or false depending if the symmetry is present or not.
+
+    """
+    M = charge_conjugation_operator(L_x, L_y)
+    return np.all(np.linalg.inv(M) @ H @ M == -H.conj())
