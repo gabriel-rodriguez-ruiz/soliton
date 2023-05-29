@@ -147,8 +147,10 @@ H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 idx = eigenvalues_sparse.argsort()
-eigenvalues_sparse = eigenvalues_sparse[idx]
-eigenvectors_sparse = eigenvectors_sparse[:, idx]
+eigenvalues_sparse_sorted = eigenvalues_sparse[idx]
+eigenvectors_sparse_sorted = eigenvectors_sparse[:, idx]
+eigenvalues_sparse = eigenvalues_sparse_sorted
+eigenvectors_sparse = eigenvectors_sparse_sorted
 
 index = np.arange(k)   #which zero mode (less than k)
 probability_density = []
@@ -204,17 +206,91 @@ for i in range(k):
     spin.append(mean_spin_xy(zero_state[i]))
 
 #%% down minus left
-# Las definiciones de cada componente cambian en cada corrida
-up_plus_left_particle = np.array(localized_state_left[2][:,0])
-up_plus_right_particle = np.array(localized_state_right[2][:,0])
-
+up_plus_left_particle = np.array(localized_state_right[2][:,0])
+# Hice un cambio de left por right en la solución numérica
 fig, ax = plt.subplots()
 y = np.arange(-L_y//2+L//2, L_y//2+L//2)
 ax.plot(y, np.real(up_plus_left_particle), "--", label="Real numerical")
 ax.plot(y, np.imag(up_plus_left_particle), "--", label="Imaginary numerical")
 
-phase = 1j*np.exp(1j*(-0.1+np.angle(up_plus_left_particle[(L_y-L)//2]) + np.pi/2))
-up_plus_right_particle_analytical = [phase/np.sqrt(2)*psi_3_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+phase_up_plus_right_particle = 1j*np.exp(1j*(np.angle(up_plus_left_particle[(L_y-L)//2]) + np.pi/2))
+up_plus_right_particle_analytical = [phase_up_plus_right_particle/np.sqrt(2)*psi_3_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
 ax.plot(y, np.real(up_plus_right_particle_analytical), label="Real analytical")
 ax.plot(y, np.imag(up_plus_right_particle_analytical), label="Imaginary analytical")
 ax.legend()
+plt.title("up_plus_right_particle_analytical")
+
+#%%
+up_plus_right_particle = np.array(localized_state_left[2][:,0])
+fig, ax = plt.subplots()
+y = np.arange(-L_y//2+L//2, L_y//2+L//2)
+ax.plot(y, np.real(up_plus_right_particle), "--", label="Real numerical")
+ax.plot(y, np.imag(up_plus_right_particle), "--", label="Imaginary numerical")
+
+phase_up_plus_left_particle = np.exp(1j*(np.angle(up_plus_right_particle[(L_y-L)//2]) + np.pi/2))
+up_plus_left_particle_analytical = [phase_up_plus_left_particle/np.sqrt(2)*psi_1_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(up_plus_left_particle_analytical), label="Real analytical")
+ax.plot(y, np.imag(up_plus_left_particle_analytical), label="Imaginary analytical")
+ax.legend()
+ax.set_xlabel("y")
+plt.title("up_plus_left_particle_analytical")
+
+#%%
+up_plus_left_hole = np.array(localized_state_right[2][:,3])
+fig, ax = plt.subplots()
+y = np.arange(-L_y//2+L//2, L_y//2+L//2)
+ax.plot(y, np.real(up_plus_left_hole), "--", label="Real numerical")
+ax.plot(y, np.imag(up_plus_left_hole), "--", label="Imaginary numerical")
+
+phase = -1j*phase_up_plus_right_particle
+up_plus_right_hole_analytical = [phase/np.sqrt(2)*psi_3_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(up_plus_right_hole_analytical), label="Real analytical")
+ax.plot(y, np.imag(up_plus_right_hole_analytical), label="Imaginary analytical")
+ax.legend()
+ax.set_xlabel("y")
+plt.title("up_plus_right_hole_analytical")
+
+#%%
+up_plus_right_hole = np.array(localized_state_left[2][:,3])
+fig, ax = plt.subplots()
+y = np.arange(-L_y//2+L//2, L_y//2+L//2)
+ax.plot(y, np.real(up_plus_right_hole), "--", label="Real numerical")
+ax.plot(y, np.imag(up_plus_right_hole), "--", label="Imaginary numerical")
+
+phase = 1j*phase_up_plus_left_particle
+up_plus_left_hole_analytical = [phase/np.sqrt(2)*psi_1_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(up_plus_left_hole_analytical), label="Real analytical")
+ax.plot(y, np.imag(up_plus_left_hole_analytical), label="Imaginary analytical")
+ax.legend()
+ax.set_xlabel("y")
+plt.title("up_plus_left_hole_analytical")
+
+#%%
+down_plus_left_particle = np.array(localized_state_right[3][:,1])
+# Hice un cambio de left por right en la solución numérica
+fig, ax = plt.subplots()
+y = np.arange(-L_y//2+L//2, L_y//2+L//2)
+ax.plot(y, np.real(down_plus_left_particle), "--", label="Real numerical")
+ax.plot(y, np.imag(down_plus_left_particle), "--", label="Imaginary numerical")
+
+phase_down_plus_right_particle = -np.exp(1j*(np.angle(down_plus_left_particle[(L_y-L)//2]) + np.pi/2))
+down_plus_right_particle_analytical = [phase_down_plus_right_particle/np.sqrt(2)*psi_4_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(down_plus_right_particle_analytical), label="Real analytical")
+ax.plot(y, np.imag(down_plus_right_particle_analytical), label="Imaginary analytical")
+ax.legend()
+plt.title("down_plus_right_particle_analytical")
+
+#%%
+down_plus_left_hole = np.array(localized_state_right[3][:,2])
+# Hice un cambio de left por right en la solución numérica
+fig, ax = plt.subplots()
+y = np.arange(-L_y//2+L//2, L_y//2+L//2)
+ax.plot(y, np.real(down_plus_left_hole), "--", label="Real numerical")
+ax.plot(y, np.imag(down_plus_left_hole), "--", label="Imaginary numerical")
+
+phase_down_plus_right_hole = -1j*phase_down_plus_right_particle
+down_plus_right_hole_analytical = [phase_down_plus_right_hole/np.sqrt(2)*psi_4_plus(y_value, kappa, m_0, Delta, L) for y_value in y]
+ax.plot(y, np.real(down_plus_right_hole_analytical), label="Real analytical")
+ax.plot(y, np.imag(down_plus_right_hole_analytical), label="Imaginary analytical")
+ax.legend()
+plt.title("down_plus_right_hole_analytical")

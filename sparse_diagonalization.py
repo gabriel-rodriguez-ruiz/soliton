@@ -41,6 +41,8 @@ localized_state_upper_left = [] # it is the site (L_x/2-1, (L_y+L)/2)
 localized_state_upper_right = [] # it is the site (L_x/2, (L_y+L)/2)
 localized_state_bottom_left = [] # it is the site (L_x/2-1, (L_y-L)/2)
 localized_state_bottom_right = [] # it is the site (L_x/2, (L_y-L)/2)
+localized_state_left = []
+localized_state_right = []
 
 for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
@@ -50,6 +52,8 @@ for i in index:
     localized_state_upper_right.append(zero_state[i][(L_y+L)//2, L_x//2,:])
     localized_state_bottom_left.append(zero_state[i][(L_y-L)//2, L_x//2-1,:])
     localized_state_bottom_right.append(zero_state[i][(L_y-L)//2, L_x//2,:])
+    localized_state_left.append(zero_state[i][:, L_x//2-1,:])
+    localized_state_right.append(zero_state[i][:, L_x//2,:])
 
 #%% Plotting of probability density
 

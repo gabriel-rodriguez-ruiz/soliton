@@ -427,3 +427,94 @@ def charge_conjugation(H, L_x, L_y):
     """
     M = charge_conjugation_operator(L_x, L_y)
     return np.all(np.linalg.inv(M) @ H @ M == -H.conj())
+
+def Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta):
+    r"""Return the matrix for A1u model with:
+
+    .. math ::
+       \vec{c_{n,m}} = (c_{n,m,\uparrow},
+                        c_{n,m,\downarrow},
+                        c^\dagger_{n,m,\downarrow},
+                        -c^\dagger_{n,m,\uparrow})^T
+       
+       H = \frac{1}{2} \sum_n^{L_x} \sum_m^{L_y} (-\mu \vec{c}^\dagger_{n,m} \tau_z\sigma_0  \vec{c}_{n,m}) +
+           \frac{1}{2} \sum_n^{L_x-1} \sum_m^{L_y} \left( \vec{c}^\dagger_{n,m}\left[ 
+            -t\tau_z\sigma_0 -
+            i\frac{\Delta}{2} \tau_x\sigma_x \right] \vec{c}_{n+1,m} + H.c. \right) +
+           \frac{1}{2} \sum_n^{L_x} \sum_m^{L_y-1} \left( \vec{c}^\dagger_{n,m}\left[ 
+            -t\tau_z\sigma_0 -
+            i\frac{\Delta}{2} \tau_x\sigma_y \right] \vec{c}_{n,m+1} + H.c. \right) 
+    """
+    M = scipy.sparse.lil_matrix((4*L_x*L_y, 4*L_x*L_y), dtype=complex)
+    onsite = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta
+    for i in range(1, L_x+1):
+      for j in range(1, L_y+1):
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite[alpha, beta]   
+    hopping_x = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_x)
+    for i in range(1, L_x):
+      for j in range(1, L_y+1):    
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x[alpha, beta]
+    hopping_y = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_y)
+    for i in range(1, L_x+1):
+      for j in range(1, L_y): 
+        for alpha in range(4):
+          for beta in range(4):
+            M[index(i, j, alpha, L_x, L_y), index(i, j+1, beta, L_x, L_y)] = hopping_y[alpha, beta]
+    return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def index_semi_infinite(i, alpha, L_x):
+  """Return the index of basis vector given the site i
+  and spin index alpha for i in {1, ..., L_x}
+  
+  .. math ::
+     (c_{1}, c_{2}, ..., c_{L_x})^T
+     
+  """
+  if i>L_x:
+      raise Exception("Site index should not be greater than samplesize.")
+  return alpha + 4*(i - 1)
+
+def Hamiltonian_A1u_semi_infinite_sparse(k, t, mu, L_x, Delta):
+    r"""Returns the H_k matrix for A1u model with:
+
+    .. math::
+        H_{A1u} = \frac{1}{2}\sum_k H_k
+        
+        H_k = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta sin(k_y)\tau_x\sigma_y \right] \vec{c}_n +
+            \sum_n^{L-1}\vec{c}^\dagger_n(-t\tau_z\sigma_0 + \frac{\Delta}{2i}\tau_x\sigma_x)\vec{c}_{n+1}
+            + H.c.
+        
+        \xi_k = -2t\cos(k)-\mu    
+        
+       \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    """
+    M = scipy.sparse.lil_matrix((4*L_x, 4*L_x), dtype=complex)
+    onsite = (-mu/4 - t/2*np.cos(k)) * np.kron(tau_z, sigma_0) + Delta/2*np.sin(k)*np.kron(tau_x, sigma_y)   # para no duplicar al sumar la traspuesta
+    for i in range(1, L_x+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_semi_infinite(i, alpha, L_x), index_semi_infinite(i, beta, L_x)] = onsite[alpha, beta] 
+    hopping = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_x)
+    for i in range(1, L_x):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_semi_infinite(i, alpha, L_x), index_semi_infinite(i+1, beta, L_x)] = hopping[alpha, beta]
+    return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def charge_conjugation_operator_sparse_1D(L_x):
+    """
+    Return the charge conjugation operator in a sparse way.
+    """
+    M = scipy.sparse.lil_matrix((4*L_x, 4*L_x), dtype=complex)
+    C = np.kron(tau_y, sigma_y)     #charge conjugation operator
+    for i in range(1, L_x+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_semi_infinite(i, alpha, L_x), index_semi_infinite(i, beta, L_x)] = C[alpha, beta]   
+    return M

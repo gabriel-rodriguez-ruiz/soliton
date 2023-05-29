@@ -1,0 +1,5 @@
+{'t': 1, 'mu': -2, 'L_x': 30, 'L_y': 30, 'Delta': 1}
+energies=[-0.01229168 -0.01229168  0.01229168  0.01229168]
+
+0th-localized state at the upper soliton
+
