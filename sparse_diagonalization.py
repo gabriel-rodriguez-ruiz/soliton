@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse, Hamiltonian_A1u_sparse, Zeeman, Hamiltonian_A1u_S
 from functions import get_components
+from phase_functions import phase_double_soliton, phase_single_soliton
 import scipy
 
 L_x = 200
@@ -17,18 +18,16 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = np.pi #0.1*np.pi  #height of the phase soliton around flux pi
 t_J = t/2   #t
 L = 30      #L_y//2
-k = 4   #number of eigenvalues
-Delta_Z = 0
-theta = np.pi/2
-phi = 0
+k = 8 #number of eigenvalues
+# phi_profile = phase_double_soliton
+phi_profile = phase_single_soliton
+phi_external = 0.5*np.pi
 
-#H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-#H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
-params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "Phi": Phi, "L": L}
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
+# H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile, L=L)
+H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile)
 #H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
@@ -79,7 +78,6 @@ plt.colorbar(image)
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 #ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
-ax.text(5,25, rf'$\Phi={np.round(Phi, 2)}$; $index={index}$')
 #plt.plot(probability_density[10,:,0])
 ax.set_title("Probability density")
 plt.tight_layout()
@@ -89,7 +87,7 @@ ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2])
 #ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
 ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
-ax.text(5,25, rf'$index={index}; \Phi={np.round(Phi, 2)}$')
+ax.text(5,25, rf'$index={index}$')
 ax.set_title("Probability density at the junction")
 
 #%% Spin determination
@@ -146,11 +144,10 @@ plt.text(0,0, f"index={index}")
 #%% Energy spectrum
 
 fig, ax = plt.subplots()
-plt.semilogy(np.abs(eigenvalues_sparse), "o")
+plt.plot(eigenvalues_sparse, "o")
 ax.set_xlabel("Label of eingevalue")
 ax.set_ylabel("Absolute value of energy")
 plt.tight_layout()
-plt.title(r"{$\Phi=$"+f"{np.round(Phi, 2)}")
 
 #%% Phi spectrum
 """

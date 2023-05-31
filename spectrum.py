@@ -11,23 +11,21 @@ import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse, Hamiltonian_A1u_sparse, Zeeman
 from functions import get_components
 import scipy
+from phase_functions import phase_single_soliton, phase_double_soliton
 
 L_x = 200
 L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-Phi = 0.01*np.pi  #superconducting phase
 t_J = t    #t/2
 L = L_y//2
 k = 8   #number of eigenvalues
-Delta_Z = 0
-theta = np.pi/2
-phi = 0
 
-#H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L)
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-#H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
+phi_profile = phase_single_soliton
+phi_external = 0.5*np.pi
+# H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile, L=L)
+H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
@@ -38,7 +36,7 @@ eigenvalues = []
 
 for Phi_value in Phi_values:
     # H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value, L=L)
-    H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value)
+    H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=Phi_value, phi_profile=phi_profile)
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
@@ -121,10 +119,11 @@ ax.set_ylabel("E")
 L_x = 200
 L_y = 200
 t = 1
-Delta = 2
+Delta = 1
 mu = -2  #-2
-Phi = 0.1*np.pi  #superconducting phase
-t_J = t    #t/2
+phi_profile = phase_double_soliton
+phi_external = 0.5*np.pi
+t_J = t/2    #t/2
 k = 12
 
 L_values = np.linspace(10, 50, 20, dtype=int)
@@ -132,7 +131,7 @@ L_values = np.linspace(10, 50, 20, dtype=int)
 eigenvalues = []
 
 for L_value in L_values:
-    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi, L=L_value)    
+    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phase_double_soliton, L=L_value)    
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
@@ -158,7 +157,7 @@ ax.set_ylabel("E")
 
 from analytical_solution import Kappa
 
-m_0 = t_J*np.sin(Phi/2)
+m_0 = t_J*np.sin(phi_external/2)
 
 def positive_energy(L, m_0):
     kappa_value = Kappa(m_0=m_0, Delta=Delta, L=L_value)
@@ -175,11 +174,11 @@ plt.yscale('log')
 
 #%% Least square fitting
 
-m_numerical, b_numerical = np.polyfit(L_values, np.log(E_numerical[0]), 1)
+m_numerical, b_numerical = np.polyfit(L_values, np.log(E_numerical[6]), 1)
 m_analytical, b_analytical = np.polyfit(L_values, np.log(E_analytical), 1)
 
 ax.plot(L_values, np.exp(m_numerical*L_values + b_numerical), label=f"{m_numerical:.3}L{b_numerical:.3}")
 ax.plot(L_values, np.exp(m_analytical*L_values + b_analytical), label=f"{m_analytical:.3}L{b_analytical:.3}")
 ax.legend()
-plt.title(r"$\Phi=$"+f"{Phi:.2}, Delta={Delta}")
+plt.title(r"$\phi_{ext}=$"+f"{phi_external:.2}, Delta={Delta}")
 plt.tight_layout()
