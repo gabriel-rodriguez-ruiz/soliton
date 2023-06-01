@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse, Hamiltonian_A1u_sparse, Zeeman, Hamiltonian_A1u_S
 from functions import get_components
-from phase_functions import phase_double_soliton, phase_single_soliton
+from phase_functions import phase_soliton_antisoliton, phase_single_soliton, phase_single_soliton_arctan
 import scipy
 
 L_x = 200
@@ -21,13 +21,16 @@ mu = -2  #-2
 t_J = t/2   #t
 L = 30      #L_y//2
 k = 8 #number of eigenvalues
+lambda_J = 10
 # phi_profile = phase_double_soliton
-phi_profile = phase_single_soliton
+phi_profile = phase_single_soliton_arctan
 phi_external = 0.5*np.pi
+y = np.arange(1, L_y+1)
+Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
 # H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile, L=L)
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile)
+H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 #H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 

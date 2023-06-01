@@ -150,7 +150,7 @@ def Hamiltonian_soliton_A1u_sparse(t, mu, L_x, L_y, Delta, t_J, phi_external, ph
                 M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
     return scipy.sparse.csr_matrix(M + M.conj().T)
 
-def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, phi_external, phi_profile):
+def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, Phi):
     r"""Return the matrix for A1u model in a junction with a superconductor with:
     
        .. math ::
@@ -169,8 +169,6 @@ def Hamiltonian_A1u_single_step_sparse(t, mu, L_x, L_y, Delta, t_J, phi_external
          
            H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}^\dagger(cos(\phi/2)\tau_0\sigma_0+isin(\phi/2)\tau_z\sigma_0)\vec{c}_{L_x,m}+H.c.]
     """
-    y = np.arange(1, L_y+1)
-    Phi = phi_profile(phi_external, y, L_y//2)
     M = scipy.sparse.lil_matrix((4*L_x*L_y, 4*L_x*L_y), dtype=complex)
     # M = np.zeros((4*L_x*L_y, 4*L_x*L_y), dtype=complex)    
     onsite_A1u = -mu/4 * np.kron(tau_z, sigma_0)   # para no duplicar al sumar la traspuesta
