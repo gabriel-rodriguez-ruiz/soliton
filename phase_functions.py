@@ -66,3 +66,31 @@ def phase_single_soliton_arctan(phi_external, y, y_0, lambda_J):
             \theta(0) =1/2
     """
     return phi_external + 4*np.arctan(np.exp((y-y_0)/lambda_J))
+
+def phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J):
+    r"""Profile function for the phase soliton-antisoliton.
+    y should be an ndarray
+        .. math ::
+            \phi(y) = \phi_{ext}+ 4\arctan(e^{(y-y_0)/\lambda}) - 4\arctan(e^{(y-y_1)/\lambda})
+            
+    """
+    return phi_external + 4*np.arctan(np.exp((y-y_0)/lambda_J)) - 4*np.arctan(np.exp((y-y_1)/lambda_J))
+
+def phase_soliton_soliton_arctan(phi_external, y, y_0, y_1, lambda_J):
+    r"""Profile function for the phase soliton-antisoliton.
+    y should be an ndarray
+        .. math ::
+            \phi(y) = \phi_{ext}+ 4\arctan(e^{(y-y_0)/\lambda}) + 4\arctan(e^{(y-y_1)/\lambda})
+            
+    """
+    return phi_external + 4*np.arctan(np.exp((y-y_0)/lambda_J)) + 4*np.arctan(np.exp((y-y_1)/lambda_J))
+
+def phase_soliton_antisoliton_arctan_A1u_S(phi_external, y, y_0, y_1, lambda_J):
+    r"""Profile function for the phase soliton-antisoliton.
+    y should be an ndarray
+        .. math ::
+            \phi(y) = 2\pi\left(\theta(y-y_0) - \theta(y-L) \right)
+            
+            \theta(0) =1/2
+    """
+    return phi_external + 4*np.arctan(np.exp((y-y_0)/lambda_J)) - 4*np.arctan(np.exp((y-y_1)/lambda_J))

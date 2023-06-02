@@ -8,9 +8,9 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_soliton_A1u, Hamiltonian_soliton_A1u_sparse, Hamiltonian_A1u_single_step_sparse, Hamiltonian_A1u_sparse, Zeeman, Hamiltonian_A1u_S
+from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S
 from functions import get_components
-from phase_functions import phase_soliton_antisoliton, phase_single_soliton, phase_single_soliton_arctan
+from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan
 import scipy
 
 L_x = 200
@@ -21,17 +21,17 @@ mu = -2  #-2
 t_J = t/2   #t
 L = 30      #L_y//2
 k = 8 #number of eigenvalues
-lambda_J = 10
-# phi_profile = phase_double_soliton
-phi_profile = phase_single_soliton_arctan
-phi_external = 0.5*np.pi
+lambda_J = 5
+# phi_profile = phase_single_soliton_arctan
+phi_external = np.pi/2
 y = np.arange(1, L_y+1)
-Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
+# Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
+# Phi = phase_soliton_antisoliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
+Phi = phase_soliton_soliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-# H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phi_profile, L=L)
-H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-#H = (Hamiltonian_A1u_sparse(t, mu, L_x, L_y, Delta) + Zeeman(theta=theta, Delta_Z=Delta_Z, L_x=L_x, L_y=L_y, phi=phi))
+H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+# H = Hamiltonian_A1u_S(t, mu, L_x, L_y, Delta, t_J, Phi)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
@@ -86,7 +86,7 @@ ax.set_title("Probability density")
 plt.tight_layout()
 
 fig, ax = plt.subplots()
-ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2])
+ax.plot(y, probability_density[index][:, L_x//2])
 #ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
 ax.set_xlabel("y")
 ax.set_ylabel("Probability density")
