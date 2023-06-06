@@ -112,3 +112,11 @@ y = np.linspace(0, 10)
 fig, ax = plt.subplots()
 ax.plot(y, [-t_J*np.sin( (epsilon*np.tanh(mu/2*(y_value-5)))/2 ) for y_value in y])
 
+#%%
+
+def mass(x, x_1, x_2):
+    return (np.sinh(x-x_1)*np.sinh(x-x_2)-1)/(np.cosh(x-x_1)*np.cosh(x-x_2))
+
+x = np.linspace(0, 100, 1000)
+plt.figure()
+plt.plot(x, [mass(x, 25, 75) for x in x])
