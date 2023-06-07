@@ -114,9 +114,10 @@ ax.plot(y, [-t_J*np.sin( (epsilon*np.tanh(mu/2*(y_value-5)))/2 ) for y_value in 
 
 #%%
 
-def mass(x, x_1, x_2):
-    return (np.sinh(x-x_1)*np.sinh(x-x_2)-1)/(np.cosh(x-x_1)*np.cosh(x-x_2))
+def mass(x, x_1, x_2, phi_ext):
+    return -(np.sinh(x-x_1)+np.sinh(x-x_2))/(np.cosh(x-x_1)*np.cosh(x-x_2)) * np.cos(phi_ext) + (np.sinh(x-x_1)*np.sinh(x-x_2)-1)/(np.cosh(x-x_1)*np.cosh(x-x_2)) *np.sin(phi_ext)
 
 x = np.linspace(0, 100, 1000)
+phi_ext = np.pi/4
 plt.figure()
-plt.plot(x, [mass(x, 25, 75) for x in x])
+plt.plot(x, [mass(x, 25, 75, phi_ext) for x in x])
