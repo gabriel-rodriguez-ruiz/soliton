@@ -51,7 +51,7 @@ def phase_soliton_antisoliton(phi_external, y, y_0, y_1):
     r"""Profile function for the phase soliton-antisoliton.
     y should be an ndarray
         .. math ::
-            \phi(y) = 2\pi\left(\theta(y-y_0) - \theta(y-L) \right)
+            \phi(y) = \phi_{ext} + 2\pi\left(\theta(y-y_0) - \theta(y-y_1) \right)
             
             \theta(0) =1/2
     """

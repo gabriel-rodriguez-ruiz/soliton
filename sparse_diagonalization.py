@@ -8,9 +8,9 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S
+from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic
 from functions import get_components
-from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan
+from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton
 import scipy
 
 L_x = 200
@@ -20,18 +20,22 @@ Delta = 1
 mu = -2  #-2
 t_J = t/2   #t
 L = 30      #L_y//2
-k = 8 #number of eigenvalues
+k = 12 #number of eigenvalues
 lambda_J = 5
 # phi_profile = phase_single_soliton_arctan
-phi_external = np.pi/2
+phi_external = 0
 y = np.arange(1, L_y+1)
+y_0 = (L_y-L)//2
+y_1 = (L_y+L)//2
+
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
-# Phi = phase_soliton_antisoliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
-Phi = phase_soliton_soliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
+# Phi = phase_single_soliton(phi_external, y, y_0)
+# Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
+Phi = phase_soliton_antisoliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-# H = Hamiltonian_A1u_S(t, mu, L_x, L_y, Delta, t_J, Phi)
+#H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
@@ -73,7 +77,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 0
+index = 4
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -114,7 +118,7 @@ for i in range(k):
 #image.set_clim(np.min(spin[:,:,1].T), np.max(spin[:,:,1].T))
 
 # Meshgrid
-x, y = np.meshgrid(np.linspace(0, L_x-1, L_x), 
+x_mesh, y_mesh = np.meshgrid(np.linspace(0, L_x-1, L_x), 
                     #np.linspace(L_y-1, 0, L_y))
                     np.linspace(0, L_y-1, L_y))
 
@@ -126,7 +130,7 @@ v = spin[index][:, :, 1]   #y component
 
 # Plotting Vector Field with QUIVER
 fig,ax = plt.subplots()
-ax.quiver(x, y, u, v, color='r', angles='uv')
+ax.quiver(x_mesh, y_mesh, u, v, color='r', angles='uv')
 ax.set_title('Spin Field in the plane')
 
 #%% Spin in z
