@@ -27,15 +27,16 @@ phi_external = 0
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
+y_s = L_y//2
 
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
-# Phi = phase_single_soliton(phi_external, y, y_0)
+Phi = phase_single_soliton(phi_external, y, y_s)
 # Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
-Phi = phase_soliton_antisoliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
+# Phi = phase_soliton_antisoliton_arctan(phi_external, y, (L_y-L)//2, (L_y+L)//2, lambda_J)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-#H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+# H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
@@ -77,7 +78,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 4
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -90,12 +91,14 @@ ax.set_title("Probability density")
 plt.tight_layout()
 
 fig, ax = plt.subplots()
-ax.plot(y, probability_density[index][:, L_x//2])
+ax.plot(y, probability_density[index][:, L_x//2], "o-")
 #ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
-ax.set_xlabel("y")
+ax.set_xlabel(r"$\ell$")
 ax.set_ylabel("Probability density")
 ax.text(5,25, rf'$index={index}$')
-ax.set_title("Probability density at the junction")
+ax.set_xticks([1,50,100,150,200])
+# ax.set_title("Probability density at the junction")
+plt.tight_layout()
 
 #%% Spin determination
 from functions import mean_spin_xy, get_components
@@ -153,7 +156,7 @@ plt.text(0,0, f"index={index}")
 fig, ax = plt.subplots()
 plt.plot(eigenvalues_sparse, "o")
 ax.set_xlabel("Label of eingevalue")
-ax.set_ylabel("Absolute value of energy")
+ax.set_ylabel("Energy")
 plt.tight_layout()
 
 #%% Phi spectrum

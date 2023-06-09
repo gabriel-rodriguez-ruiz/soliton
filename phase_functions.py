@@ -43,7 +43,7 @@ def phase_single_soliton(phi_external, y, y_0):
         .. math ::
             \phi(y) = 2\pi\theta(y-y_0)
             
-            \theta(0) =1/2
+            \theta(0) = 1/2
     """
     return phi_external + 2*np.pi*np.heaviside(y-y_0, 1/2)
 
@@ -53,7 +53,7 @@ def phase_soliton_antisoliton(phi_external, y, y_0, y_1):
         .. math ::
             \phi(y) = \phi_{ext} + 2\pi\left(\theta(y-y_0) - \theta(y-y_1) \right)
             
-            \theta(0) =1/2
+            \theta(0) = 1/2
     """
     return phi_external + 2*np.pi*( np.heaviside(y-y_0, 1/2) - np.heaviside(y-y_1, 1/2) )
 
