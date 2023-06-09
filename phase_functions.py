@@ -93,4 +93,5 @@ def phase_soliton_antisoliton_arctan_A1u_S(phi_external, y, y_0, y_1, lambda_J):
             
             \theta(0) =1/2
     """
-    return phi_external + 4*np.arctan(np.exp((y-y_0)/lambda_J)) - 4*np.arctan(np.exp((y-y_1)/lambda_J))
+    return phi_external + 2*np.arctan(np.exp(2*(y-y_0)/lambda_J)) - np.pi/2 - 2*np.arctan(np.exp(2*(y-y_1)/lambda_J))
+
