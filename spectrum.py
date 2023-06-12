@@ -30,7 +30,6 @@ H = Hamiltonian_A1u_single_step_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 
 #%% Plotting vs. Phi
-
 Phi_values = np.linspace(0, 2*np.pi, 30)
 eigenvalues = []
 
@@ -52,6 +51,14 @@ plt.yscale('log')
 ax.set_xlabel(r"$\Phi$")
 ax.set_ylabel(r"$E$")
 #%% Plotting vs. t_J
+from hamiltonians import Hamiltonian_A1u_junction_sparse
+
+from phase_functions import phase_single_soliton
+
+phi_external = 0
+y = np.arange(1, L_y+1)
+y_s = (L_y+1)//2
+Phi = phase_single_soliton(phi_external, y, y_s)
 
 t_J_values = np.linspace(0, 1, 10)
 eigenvalues = []
@@ -62,7 +69,7 @@ localized_state_up = [] # it is the site ((L_x+L)/2, L_y/2)
 localized_state_down = []
 
 for t_J_value in t_J_values:
-    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J_value, Phi=Phi, L=L)
+    H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J_value, Phi=Phi)
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)

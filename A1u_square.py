@@ -15,7 +15,7 @@ L_y = 200
 t = 1
 Delta = 1
 mu = -2
-k = 4
+k = 8
 
 H = Hamiltonian_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta)
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
@@ -36,8 +36,6 @@ for i in index:
     destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
     probability_density.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)/(np.linalg.norm(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)))
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
-    localized_state_left.append(zero_state[i][:, L_x,:])
-    localized_state_right.append(zero_state[i][:, 0,:])
 
 #%% Plotting of probability density
 

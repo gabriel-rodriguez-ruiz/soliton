@@ -57,6 +57,17 @@ def phase_soliton_antisoliton(phi_external, y, y_0, y_1):
     """
     return phi_external + 2*np.pi*( np.heaviside(y-y_0, 1/2) - np.heaviside(y-y_1, 1/2) )
 
+def phase_antisoliton_soliton(phi_external, y, y_0, y_1):
+    r"""Profile function for the phase soliton-antisoliton.
+    y should be an ndarray
+        .. math ::
+            \phi(y) = \phi_{ext} + 2\pi - 2\pi\left(\theta(y-y_0) - \theta(y-y_1) \right)
+            
+            \theta(0) = 1/2
+    """
+    return phi_external + 2*np.pi - 2*np.pi*( np.heaviside(y-y_0, 1/2) - np.heaviside(y-y_1, 1/2) )
+
+
 def phase_single_soliton_arctan(phi_external, y, y_0, lambda_J):
     r"""Step function for the phase single soliton.
     y should be an ndarray
