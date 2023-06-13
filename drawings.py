@@ -8,116 +8,68 @@ Created on Fri Apr 14 16:42:01 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
+from phase_functions import phase_single_soliton_arctan
 
-def Phi(epsilon, y):
-    r"""
-    Phase difference due to the magnetic flux.
+L_x = 200
+L_y = 200       #L_y should be odd for single soliton
+t = 1
+Delta = 1
+mu = -2  #-2
+t_J = t/2   #t
+L = 30      #L_y//2
+k = 12 #number of eigenvalues
+lambda_J = 10
+# phi_profile = phase_single_soliton_arctan
+phi_external = 0
+y = np.arange(1, L_y+1)
+y_0 = (L_y-L)//2
+y_1 = (L_y+L)//2
+y_s = (L_y+1)//2
 
-    Parameters
-    ----------
-    epsilon : float
-        Flux around pi.
-        
-    y : float
-        Coordinate along the junction.
+Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 
-    Returns
-    -------
-    float
-        The phase difference.
-
-    """
-    return np.pi + np.sign(y)*epsilon
-
-def mass(phi, t_J):
-    """
-    Mass term.    
-
-    Parameters
-    ----------
-    phi : float
-        Phase difference for a given y.
-    t_J : float
-        Hopping parameter.
-    Returns
-    -------
-    The mass term.
-
-    """
-    return t_J*np.cos(phi/2)
-
-def localized_solution(y):
-    """
-    Solution of the effective Hamiltonian localized at y=0.
-    I assume Delta=1.
-
-    Parameters
-    ----------
-    y : float
-        Coordinate along the junction.
-
-    Returns
-    -------
-    None.
-    The solution at y.
-    """
-    xi = mass(Phi(epsilon, y), t_J)
-    return np.exp(xi*y)
-
-#%% Plotting of flux
-epsilon = 0.04*np.pi
-y = np.linspace(-1, 1)
+#%% Phase soliton
+plt.rc("font", family="serif")  # set font family
+plt.rc("xtick", labelsize=18)  # reduced tick label size
+plt.rc("ytick", labelsize=18)
+plt.rc('font', size=18) #controls default text size
+plt.rc('axes', titlesize=18) #fontsize of the title
+plt.rc('axes', labelsize=18) #fontsize of the x and y labels
+plt.rc("text", usetex=True) # for better LaTex (slower)
+plt.rcParams['xtick.top'] = True    #ticks on top
+plt.rcParams['xtick.labeltop'] = False
+plt.rcParams['ytick.right'] = True    #ticks on left
+plt.rcParams['ytick.labelright'] = False
+plt.rc('legend', fontsize=18) #fontsize of the legend
 
 fig, ax = plt.subplots()
-ax.plot(y, [Phi(epsilon, y_value) for y_value in y])
-ax.set_xlabel("y")
-ax.set_ylabel(r"$\phi(y)$")
-ax.set_yticks([np.pi-epsilon, np.pi, np.pi+epsilon],
-              [r"$\pi-\epsilon$", r"$\pi$", r"$\pi+\epsilon$"])
-ax.set_xticks([0],["0"])
-fig.tight_layout()
+ax.plot(y, Phi/(2*np.pi))
+# ax.set_xlabel(r"$x$")
+ax.set_ylabel(r"$\phi/2\pi$")
+ax.set_xticks([y_s], [r"$x_0$"])
+plt.tight_layout()
 
-#%% Plotting of the mass
-t_J = 1
+#%% Mass soliton
 
 fig, ax = plt.subplots()
-ax.plot(y, [mass(Phi(epsilon, y_value), t_J) for y_value in y])
-ax.set_xlabel("y")
-ax.set_ylabel(r"$m(y)$")
-ax.set_yticks([mass(np.pi-epsilon, t_J), 0, mass(np.pi+epsilon, t_J)],
-              [r"$t_J\sin(\epsilon/2)$", r"0", r"$-t_J\sin(\epsilon/2)$"])
-ax.set_xticks([0],["0"])
-fig.tight_layout()
+ax.plot(y, -np.tanh((y-y_s)/lambda_J))
+# ax.plot(y, np.cos(Phi/2))
+# ax.set_xlabel(r"$x$")
+ax.set_ylabel(r"$m(\phi)/m_0$")
+ax.set_xticks([y_s], [r"$x_0$"])
+plt.tight_layout()
 
-#%% Plotting of the effective solution
-y = np.linspace(-100, 100, 10000)
+#%% Mass and Phase
+
 fig, ax = plt.subplots()
-ax.plot(y, [localized_solution(y_value) for y_value in y])
-ax.set_xlabel("y")
-ax.set_ylabel(r"$\Psi(y)$")
-ax.text(-50, 0.75, r"$e^{\frac{t_J}{\Delta}\sin(\epsilon/2)y}$")
-ax.text(50, 0.75, r"$e^{-\frac{t_J}{\Delta}\sin(\epsilon/2)y}$")
-ax.arrow(-50, 0.75, -10-(-50), localized_solution(-10)-0.75)
-ax.arrow(50, 0.75, 10-(50), localized_solution(10)-0.75)
-ax.set_yticks([])
-ax.set_xticks([0],["0"])
-fig.tight_layout()
+ax.plot(y, Phi/(2*np.pi), "b", label=r"$\phi/(2\pi)$")
+ax2 = ax.twinx()
+ax2.plot(y, -np.tanh((y-y_s)/lambda_J), "r--", label=r"$m(\phi)/m_0$")
+# ax.set_xlabel(r"$x$")
+ax.set_ylabel(r"$\phi/2\pi$")
+ax2.set_ylabel(r"$m(\phi)/m_0$", rotation=270)
+ax.set_xticks([y_s], [r"$x_0$"])
+ax.legend(loc="center left")
+ax2.legend(loc="center right")
 
-#%% Plotting of mass with tanh
-
-epsilon = 0.1
-t_J = 1
-mu = 1
-y = np.linspace(0, 10)
-fig, ax = plt.subplots()
-ax.plot(y, [-t_J*np.sin( (epsilon*np.tanh(mu/2*(y_value-5)))/2 ) for y_value in y])
-
-#%%
-
-def mass(x, x_1, x_2, phi_ext):
-    return -(np.sinh(x-x_1)+np.sinh(x-x_2))/(np.cosh(x-x_1)*np.cosh(x-x_2)) * np.cos(phi_ext) + (np.sinh(x-x_1)*np.sinh(x-x_2)-1)/(np.cosh(x-x_1)*np.cosh(x-x_2)) *np.sin(phi_ext)
-
-x = np.linspace(0, 100, 1000)
-phi_ext = np.pi/4
-plt.figure()
-plt.plot(x, [mass(x, 25, 75, phi_ext) for x in x])
+plt.tight_layout()
