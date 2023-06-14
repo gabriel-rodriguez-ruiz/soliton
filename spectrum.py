@@ -123,22 +123,27 @@ plt.yscale('log')
 ax.set_ylabel("E")
 
 #%% Plotting E vs. L
+from phase_functions import phase_soliton_antisoliton
+
 L_x = 200
 L_y = 200
 t = 1
 Delta = 1
 mu = -2  #-2
-phi_profile = phase_double_soliton
-phi_external = 0.5*np.pi
+phi_external = 0
 t_J = t/2    #t/2
 k = 12
-
+y = np.arange(1, L_y+1)
+y_s = (L_y+1)//2
 L_values = np.linspace(10, 50, 20, dtype=int)
 
 eigenvalues = []
 
 for L_value in L_values:
-    H = Hamiltonian_soliton_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, phi_external=phi_external, phi_profile=phase_double_soliton, L=L_value)    
+    y_0 = (L_y-L_value)//2
+    y_1 = (L_y+L_value)//2
+    Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
+    H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
@@ -164,7 +169,7 @@ ax.set_ylabel("E")
 
 from analytical_solution import Kappa
 
-m_0 = t_J*np.sin(phi_external/2)
+m_0 = t_J
 
 def positive_energy(L, m_0):
     kappa_value = Kappa(m_0=m_0, Delta=Delta, L=L_value)

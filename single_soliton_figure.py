@@ -13,12 +13,12 @@ from functions import get_components
 from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton
 import scipy
 
-L_x = 201
+L_x = 200
 L_y = 201
 t = 1
 Delta = 1
 mu = -2  #-2
-t_J = t/2   #t
+t_J = t   #t
 L = 30      #L_y//2
 k = 12 #number of eigenvalues
 lambda_J = 5
@@ -27,7 +27,7 @@ phi_external = 0
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
-y_s = (L_y-1)//2
+y_s = (L_y+1)//2
 
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
 Phi = phase_single_soliton(phi_external, y, y_s)
@@ -79,7 +79,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 3
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(particle_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
