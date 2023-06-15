@@ -19,11 +19,10 @@ t = 1
 Delta = 1
 mu = -2  #-2
 t_J = t/2   #t
-L = 0      #L_y//2
+L = 30      #L_y//2
 k = 12 #number of eigenvalues
 lambda_J = 5
-# phi_profile = phase_single_soliton_arctan
-phi_external = 0
+phi_external = np.pi/10
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -92,7 +91,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 0
+index = 2
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
