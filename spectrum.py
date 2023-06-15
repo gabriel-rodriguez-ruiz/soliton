@@ -135,7 +135,7 @@ t_J = t/2    #t/2
 k = 12
 y = np.arange(1, L_y+1)
 y_s = (L_y+1)//2
-L_values = np.linspace(10, 50, 20, dtype=int)
+L_values = np.linspace(10, 50, 5, dtype=int)
 
 eigenvalues = []
 
