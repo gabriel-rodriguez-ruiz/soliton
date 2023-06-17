@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1u_junction_sparse_periodic_in_x, Hamiltonian_A1u_junction
 from functions import get_components
-from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S, phase_antisoliton_soliton
+from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S_around_zero, phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi
 import scipy
 
 L_x = 200
@@ -22,7 +22,7 @@ t_J = t/2   #t
 L = 30      #L_y//2
 k = 12 #number of eigenvalues
 lambda_J = 5
-phi_external = np.pi/10
+phi_external = 0
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -34,7 +34,7 @@ y_s = (L_y+1)//2
 # Phi = 2*np.pi * np.ones_like(y)
 # Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
-Phi = phase_soliton_antisoliton_arctan_A1u_S(phi_external, y, y_0, y_1, lambda_J)
+Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
 # H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
