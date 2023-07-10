@@ -18,10 +18,10 @@ L_y = 200       #L_y should be odd for single soliton
 t = 1
 Delta = 1
 mu = -2  #-2
-t_J = t/40   #t
+t_J = t/2   #t
 L = 30      #L_y//2
 k = 12 #number of eigenvalues
-lambda_J = 10
+lambda_J = 100
 phi_external = 0
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
@@ -49,7 +49,7 @@ H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t
 # eigenvectors_sparse_sorted = eigenvectors_sparse[:, idx]
 # eigenvalues_sparse = eigenvalues_sparse_sorted
 # eigenvectors_sparse = eigenvectors_sparse_sorted
-eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
+eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigs(H, k=k, sigma=0) 
 
 #%% Probability density
 index = np.arange(k)   #which zero mode (less than k)
@@ -91,7 +91,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 0
+index = 2
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
