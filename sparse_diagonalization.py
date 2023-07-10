@@ -18,10 +18,10 @@ L_y = 200       #L_y should be odd for single soliton
 t = 1
 Delta = 1
 mu = -2  #-2
-t_J = t/10   #t
+t_J = t/40   #t
 L = 30      #L_y//2
 k = 12 #number of eigenvalues
-lambda_J = 200
+lambda_J = 10
 phi_external = 0
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
@@ -29,8 +29,8 @@ y_1 = (L_y+L)//2
 y_s = (L_y+1)//2
 
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
-Phi = phase_single_soliton(phi_external, y, y_s)
-# Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
+# Phi = phase_single_soliton(phi_external, y, y_s)
+Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 # Phi = 2*np.pi * np.ones_like(y)
 # Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
@@ -91,7 +91,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 2
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -118,6 +118,12 @@ plt.title("Probability density particle")
 image = ax.imshow(probability_density_particle[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
 #ax.set_title(f"{params}")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+
+fig, ax = plt.subplots()
+plt.title("Soliton profile")
+ax.plot(y, Phi)
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 
