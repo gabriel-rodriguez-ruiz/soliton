@@ -38,6 +38,24 @@ def index(i, j, alpha, L_x, L_y):
       raise Exception("Site index should not be greater than samplesize.")
   return alpha + 4*( L_y*(i-1) + j - 1)
 
+def index_k(i, alpha, L):
+  r"""Return the index of basis vector given the site (i,j)
+  and spin index alpha in {0,1,2,3} for i in {1, ..., L}. The site 1 corresponds to the left real space position.
+  
+  .. math ::
+     (c_{1}, c_{2}, ..., c_{L})^T
+     
+     \text{index}(i,j,\alpha,L_x,L_y) = \alpha + 4(i-1)
+     
+     \text{real space}
+     
+     (c_{1} &... c_{L})
+     """
+  if (i>L):
+      raise Exception("Site index should not be greater than samplesize.")
+  return alpha + 4*(i-1)
+
+
 def index_periodic(i, j, alpha, L_x, L_y):
   r"""Return the index of basis vector given the site (i,j)
   and spin index alpha in {0,1,2,3} for i in {1, ..., L_x} and
@@ -593,3 +611,46 @@ def Hamiltonian_A1u_junction(t, mu, L_x, L_y, Delta, t_J, Phi):
             for beta in range(4):
                 M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
     return M + M.conj().T
+
+def Hamiltonian_A1u_junction_sparse_k(t, k, mu, L, Delta, phi, t_J):
+    r"""Returns the H_k matrix for A1u model with:
+
+    .. math::
+        H_{A1u} = \frac{1}{2}\sum_k H_k
+        
+        H_k = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta sin(k_y)\tau_x\sigma_y \right] +
+            \sum_n^{L-1}\vec{c}^\dagger_n(-t\tau_z\sigma_0 + \frac{\Delta}{2i}\tau_x\sigma_x)\vec{c}_{n+1}
+            + H.c.
+        
+        H = H_k^{S1} + H_k^{S2} + H_{J,k}
+        
+        H_{J,k} = t_J\vec{c}_{S1,k,L}^{\dagger}\left( 
+            \frac{\tau^z+\tau^0}{2} e^{i\phi/2} + \frac{\tau^z-\tau^0}{2} e^{-i\phi/2}
+            \right)\vec{c}_{S2,k,1} + H.c.            
+       
+        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    """
+    M = scipy.sparse.lil_matrix((4*L, 4*L), dtype=complex)
+    chi_k = -mu - 2*t * np.cos(k)
+    onsite_A1u = 1/2*(chi_k * np.kron(tau_z, sigma_0) + \
+            Delta *np.sin(k)* np.kron(tau_x, sigma_y) )
+    for i in range(1, L+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, beta, L)] = onsite_A1u[alpha, beta]
+    hopping_A1u = 1/2*(-t*np.kron(tau_z, sigma_0) - 1j*Delta/2 * np.kron(tau_x, sigma_x) )
+    for i in range(1, L//2):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_A1u[alpha, beta]
+    for i in range((L//2+1), L):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, alpha, L)] = hopping_A1u[alpha, beta]
+    hopping_junction_x = t_J/2 * (np.cos(phi/2)*np.kron(tau_z, sigma_0)+1j*np.sin(phi/2)*np.kron(tau_0, sigma_0))
+    for alpha in range(4):
+        for beta in range(4):
+            M[index_k(L//2, alpha, L), index_k(L//2+1, beta, L)] = hopping_junction_x[alpha, beta]                        
+    return scipy.sparse.csr_matrix(M + M.conj().T)

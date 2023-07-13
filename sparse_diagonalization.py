@@ -8,7 +8,7 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1u_junction_sparse_periodic_in_x, Hamiltonian_A1u_junction
+from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1u_junction_sparse_periodic_in_x, Hamiltonian_A1u_junction_sparse_k
 from functions import get_components
 from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S_around_zero, phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi
 import scipy
@@ -20,7 +20,7 @@ Delta = 1
 mu = -2  #-2
 t_J = t/2   #t
 L = 30      #L_y//2
-k = 12 #number of eigenvalues
+n = 12 #number of eigenvalues
 lambda_J = 100
 phi_external = 0
 y = np.arange(1, L_y+1)
@@ -37,22 +37,19 @@ Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+# H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-# eigenvalues_sparse, eigenvectors_sparse = np.linalg.eigh(H)
-# idx = np.abs(eigenvalues_sparse).argsort()
-# eigenvalues_sparse_sorted = eigenvalues_sparse[idx]
-# eigenvectors_sparse_sorted = eigenvectors_sparse[:, idx]
-# eigenvalues_sparse = eigenvalues_sparse_sorted
-# eigenvectors_sparse = eigenvectors_sparse_sorted
-eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigs(H, k=k, sigma=0) 
+k = 0.01
+phi = 0.1*np.pi
+H = Hamiltonian_A1u_junction_sparse_k(t=t, k=0, mu=mu, L=L, Delta=Delta, phi=phi, t_J=t_J)
+eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0.001) 
 
 #%% Probability density
-index = np.arange(k)   #which zero mode (less than k)
+index = np.arange(n)   #which zero mode (less than k)
 probability_density = []
 zero_state = []
 localized_state_upper_left = [] # it is the site (L_x/2-1, (L_y+L)/2)
