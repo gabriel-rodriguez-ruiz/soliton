@@ -20,7 +20,7 @@ Delta = 1
 mu = -2  #-2
 t_J = t/2   #t
 L = 30      #L_y//2
-n = 12 #number of eigenvalues
+n = 4 #number of eigenvalues
 lambda_J = 100
 phi_external = 0
 y = np.arange(1, L_y+1)
@@ -37,15 +37,13 @@ Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-# H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-k = 0.01
-phi = 0.1*np.pi
-H = Hamiltonian_A1u_junction_sparse_k(t=t, k=0, mu=mu, L=L, Delta=Delta, phi=phi, t_J=t_J)
+
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0.001) 
 
 #%% Probability density
