@@ -115,3 +115,18 @@ def phase_soliton_antisoliton_arctan_A1u_S_around_pi(phi_external, y, y_0, y_1, 
             \theta(0) =1/2
     """
     return phi_external + 2*np.arctan(np.exp(2*(y-y_0)/lambda_J)) - np.pi/2 + 2*np.arctan(np.exp(-2*(y-y_1)/lambda_J))
+
+def phase_single_soliton_S(phi_external, y, y_0, phi_0, lambda_J):
+    r"""Step function for the phase single soliton.
+    y should be an ndarray
+        .. math ::
+            \begin{eqnarray}
+                &\phi_1(x) = 2\arctan \left[ \tan\left(\frac{\phi_{0}}{2}\right)\tanh\left( \sqrt{E_0}|\sin \phi_{0}| \frac{x-x_1}{\lambda_J} \right) \right]\\
+                &-\phi_0 \leq\phi\leq \phi_0\\
+                &\phi_2(x) = \pi - 2\arctan \left[ \tan\left(\frac{\phi_{0}-\pi}{2}\right)\tanh\left( \sqrt{E_0}|\sin \phi_{0}| \frac{x-x_2}{\lambda_J} \right) \right]\\
+                &\phi_0 \leq\phi\leq 2\pi-\phi_0
+            \end{eqnarray}
+    """
+    return [phi_external + 2*np.arctan(np.tan(phi_0/2)*np.tanh(np.abs(np.sin(phi_0))*(y-y_0)/lambda_J)),
+            phi_external + np.pi - 2*np.arctan(np.tan((phi_0-np.pi)/2)*np.tanh(np.abs(np.sin(phi_0))*(y-y_0)/lambda_J))]
+

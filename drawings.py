@@ -8,7 +8,7 @@ Created on Fri Apr 14 16:42:01 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from phase_functions import phase_single_soliton_arctan
+from phase_functions import phase_single_soliton_arctan, phase_single_soliton_S
 
 L_x = 200
 L_y = 200       #L_y should be odd for single soliton
@@ -73,3 +73,17 @@ ax.legend(loc="center left")
 ax2.legend(loc="center right")
 
 plt.tight_layout()
+
+#%% Phase TRITOPS-S
+
+y = np.linspace(-100, 100, 1000)
+y_0 = 0
+lambda_J = 10
+phi_external = 0
+phi_0 = 0.1*np.pi
+
+Phi = phase_single_soliton_S(phi_external=phi_external, y=y, y_0=y_0, lambda_J=lambda_J, phi_0=phi_0)
+
+fig, ax = plt.subplots()
+ax.plot(y, Phi[0])
+ax.plot(y, Phi[1])
