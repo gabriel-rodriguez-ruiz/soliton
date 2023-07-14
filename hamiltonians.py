@@ -612,7 +612,7 @@ def Hamiltonian_A1u_junction(t, mu, L_x, L_y, Delta, t_J, Phi):
                 M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
     return M + M.conj().T
 
-def Hamiltonian_A1u_junction_sparse_k(t, k, mu, L, Delta, phi, t_J):
+def Hamiltonian_A1u_junction_k(t, k, mu, L, Delta, phi, t_J):
     r"""Returns the H_k matrix for A1u model with:
 
     .. math::
@@ -632,7 +632,7 @@ def Hamiltonian_A1u_junction_sparse_k(t, k, mu, L, Delta, phi, t_J):
        
         \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
     """
-    M = scipy.sparse.lil_matrix((4*L, 4*L), dtype=complex)
+    M = np.zeros((4*L, 4*L), dtype=complex)
     chi_k = -mu - 2*t * np.cos(k)
     onsite_A1u = 1/2*(chi_k * np.kron(tau_z, sigma_0) + \
             Delta *np.sin(k)* np.kron(tau_x, sigma_y) )
@@ -653,7 +653,7 @@ def Hamiltonian_A1u_junction_sparse_k(t, k, mu, L, Delta, phi, t_J):
     for alpha in range(4):
         for beta in range(4):
             M[index_k(L//2, alpha, L), index_k(L//2+1, beta, L)] = hopping_junction_x[alpha, beta]                        
-    return scipy.sparse.csr_matrix(M + M.conj().T)
+    return (M + M.conj().T)
 
 def Hamiltonian_A1u_S_junction_sparse_k(t, k, mu, L, Delta, phi, t_J):
     r"""Returns the H_k matrix for A1u model with:
