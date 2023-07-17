@@ -354,6 +354,36 @@ def Hamiltonian_A1u_semi_infinite_sparse(k, t, mu, L_x, Delta):
                 M[index_semi_infinite(i, alpha, L_x), index_semi_infinite(i+1, beta, L_x)] = hopping[alpha, beta]
     return scipy.sparse.csr_matrix(M + M.conj().T)
 
+def Hamiltonian_A1u_semi_infinite(k, t, mu, L_x, Delta):
+    r"""Returns the H_k matrix for A1u model with:
+
+    .. math::
+        H_{A1u} = \frac{1}{2}\sum_k H_k
+        
+        H_k = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta sin(k_y)\tau_x\sigma_y \right] \vec{c}_n +
+            \sum_n^{L-1}\vec{c}^\dagger_n(-t\tau_z\sigma_0 + \frac{\Delta}{2i}\tau_x\sigma_x)\vec{c}_{n+1}
+            + H.c.
+        
+        \xi_k = -2t\cos(k)-\mu    
+        
+       \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    """
+    M = np.zeros((4*L_x, 4*L_x), dtype=complex)
+    onsite = (-mu/2 - t*np.cos(k)) * np.kron(tau_z, sigma_0) + Delta/2*np.sin(k)*np.kron(tau_x, sigma_y)   # para no duplicar al sumar la traspuesta
+    for i in range(1, L_x+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_semi_infinite(i, alpha, L_x), index_semi_infinite(i, beta, L_x)] = onsite[alpha, beta] 
+    hopping = -t/2 * np.kron(tau_z, sigma_0) - 1j*Delta/4 * np.kron(tau_x, sigma_x)
+    for i in range(1, L_x):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_semi_infinite(i, alpha, L_x), index_semi_infinite(i+1, beta, L_x)] = hopping[alpha, beta]
+    return (M + M.conj().T)
+
+
 def charge_conjugation_operator_sparse_1D(L_x):
     """
     Return the charge conjugation operator in a sparse way.
@@ -648,7 +678,7 @@ def Hamiltonian_A1u_junction_k(t, k, mu, L, Delta, phi, t_J):
     for i in range((L//2+1), L):
         for alpha in range(4):
             for beta in range(4):
-                M[index_k(i, alpha, L), index_k(i, alpha, L)] = hopping_A1u[alpha, beta]
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_A1u[alpha, beta]
     hopping_junction_x = t_J/2 * (np.cos(phi/2)*np.kron(tau_z, sigma_0)+1j*np.sin(phi/2)*np.kron(tau_0, sigma_0))
     for alpha in range(4):
         for beta in range(4):
@@ -703,3 +733,52 @@ def Hamiltonian_A1u_S_junction_sparse_k(t, k, mu, L, Delta, phi, t_J):
         for beta in range(4):
             M[index_k(L//2, alpha, L), index_k(L//2+1, beta, L)] = hopping_junction_x[alpha, beta]                        
     return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def Hamiltonian_A1u_S_junction_k(t, k, mu, L, Delta, phi, t_J):
+    r"""Returns the H_k matrix for A1u model with:
+
+    .. math::
+        H_{A1u} = \frac{1}{2}\sum_k H_k
+        
+        H_k = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta sin(k_y)\tau_x\sigma_y \right] +
+            \sum_n^{L-1}\vec{c}^\dagger_n(-t\tau_z\sigma_0 + \frac{\Delta}{2i}\tau_x\sigma_x)\vec{c}_{n+1}
+            + H.c.
+        
+        H = H_k^{S1} + H_k^{S2} + H_{J,k}
+        
+        H_{J,k} = t_J\vec{c}_{S1,k,L}^{\dagger}\left( 
+            \frac{\tau^z+\tau^0}{2} e^{i\phi/2} + \frac{\tau^z-\tau^0}{2} e^{-i\phi/2}
+            \right)\vec{c}_{S2,k,1} + H.c.            
+       
+        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    """
+    M = np.zeros((4*L, 4*L), dtype=complex)
+    chi_k = -mu - 2*t * np.cos(k)
+    onsite_A1u = 1/2*(chi_k * np.kron(tau_z, sigma_0) + \
+            Delta *np.sin(k)* np.kron(tau_x, sigma_y) )
+    for i in range(1, L//2):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, beta, L)] = onsite_A1u[alpha, beta]
+    onsite_S = chi_k/4 * np.kron(tau_z, sigma_0) + Delta/4*np.kron(tau_x, sigma_0) 
+    for i in range(L//2, L+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, beta, L)] = onsite_S[alpha, beta]
+    hopping_A1u = 1/2*(-t*np.kron(tau_z, sigma_0) - 1j*Delta/2 * np.kron(tau_x, sigma_x) )
+    for i in range(1, L//2):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_A1u[alpha, beta]
+    hopping_S = 1/4*(-t*np.kron(tau_z, sigma_0) )
+    for i in range(L//2+1, L):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_S[alpha, beta]
+    hopping_junction_x = t_J/4 * (np.cos(phi/2)*np.kron(tau_z, sigma_0)+1j*np.sin(phi/2)*np.kron(tau_0, sigma_0))
+    for alpha in range(4):
+        for beta in range(4):
+            M[index_k(L//2, alpha, L), index_k(L//2+1, beta, L)] = hopping_junction_x[alpha, beta]                        
+    return (M + M.conj().T)

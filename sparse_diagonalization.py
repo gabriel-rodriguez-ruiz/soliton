@@ -8,9 +8,10 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1u_junction_sparse_periodic_in_x, Hamiltonian_A1u_junction_sparse_k
+from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1u_junction_sparse_periodic_in_x
 from functions import get_components
-from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S_around_zero, phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi
+from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S_around_zero, \
+    phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi, phase_soliton_antisoliton_S_around_zero, phase_soliton_antisoliton_S_around_pi
 import scipy
 
 L_x = 200
@@ -20,9 +21,10 @@ Delta = 1
 mu = -2  #-2
 t_J = t/2   #t
 L = 30      #L_y//2
-n = 4 #number of eigenvalues
-lambda_J = 100
+n = 12 #number of eigenvalues
+lambda_J = 10
 phi_external = 0
+phi_eq = 0.08*2*np.pi
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -30,17 +32,19 @@ y_s = (L_y+1)//2
 
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
 # Phi = phase_single_soliton(phi_external, y, y_s)
-Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
+# Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 # Phi = 2*np.pi * np.ones_like(y)
 # Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
+Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
+
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+# H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-# H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 
@@ -86,7 +90,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 2
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -133,7 +137,7 @@ from functions import mean_spin_xy, get_components
 # spin_mean_value = mean_spin(corner_state_normalized)
 
 spin = []
-for i in range(k):
+for i in range(n):
     spin.append(mean_spin_xy(zero_state[i]))
 
 #%%
