@@ -80,10 +80,21 @@ y = np.linspace(-100, 100, 1000)
 y_0 = 0
 lambda_J = 10
 phi_external = 0
-phi_0 = 0.1*np.pi
+phi_0 = 0.08*2*np.pi
 
 Phi = phase_single_soliton_S(phi_external=phi_external, y=y, y_0=y_0, lambda_J=lambda_J, phi_0=phi_0)
 
 fig, ax = plt.subplots()
-ax.plot(y, Phi[0])
-ax.plot(y, Phi[1])
+ax2 = ax.twinx()
+ax.plot(y, Phi[0]/(2*np.pi), "b", label=r"$\phi_1/(2\pi)$")
+ax.plot(y, Phi[1]/(2*np.pi), "r", label=r"$\phi_2/(2\pi)$")
+ax.set_ylabel(r"$\phi/(2\pi)$")
+ax2.set_ylabel(r"$m(\phi)/m_0$", rotation=270)
+ax2.plot(y, np.sin(Phi[0]), "b--", label=r"$m(\phi_1)/m_0$")
+ax2.plot(y, np.sin(Phi[1]), "r--", label=r"$m(\phi_2)/m_0$")
+ax.set_xticks([0], [r"$x_0$"])
+ax.legend()
+ax2.legend()
+ax2.legend(loc="center right")
+
+plt.tight_layout()

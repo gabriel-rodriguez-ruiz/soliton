@@ -18,9 +18,9 @@ L_x = 200
 L_y = 200       #L_y should be odd for single soliton
 t = 1
 Delta = 1
-mu = -2  #-2
-t_J = t/2   #t
-L = 100      #L_y//2
+mu = -2*t  #-2
+t_J = t   #t
+L = 30      #L_y//2
 n = 12 #number of eigenvalues
 lambda_J = 10
 phi_external = 0
@@ -38,8 +38,8 @@ y_s = (L_y+1)//2
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
-Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
-# Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
+# Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
+Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
 # H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
@@ -49,7 +49,7 @@ H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 
-eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0.001) 
+eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0) 
 
 #%% Probability density
 index = np.arange(n)   #which zero mode (less than k)
@@ -91,7 +91,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 2
+index = 3
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -102,12 +102,14 @@ ax.set_ylabel("y")
 #plt.plot(probability_density[10,:,0])
 ax.set_title("Probability density")
 plt.tight_layout()
-probability_density_right = probability_density[index][:, L_x//2]/np.linalg.norm(probability_density[0][:, L_x//2])  #The y-axis is inverted
+# probability_density_right = probability_density[index][:, L_x//2]/np.linalg.norm(probability_density[0][:, L_x//2])  #The y-axis is inverted
+probability_density_right = probability_density[index][:, L_x-1]/np.linalg.norm(probability_density[index][:, L_x-1])  #The y-axis is inverted
+
 fig, ax = plt.subplots()
 ax.plot(y, probability_density_right, "o")
 #ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
 ax.set_xlabel(r"$\ell$")
-ax.set_ylabel("Probability density")
+ax.set_ylabel("Probability density at the junction")
 ax.text(5,25, rf'$index={index}$')
 ax.set_xticks([1,50,100,150,200])
 # ax.set_title("Probability density at the junction")

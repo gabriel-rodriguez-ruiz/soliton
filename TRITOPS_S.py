@@ -49,10 +49,12 @@ phi_values = np.linspace(0, 2*np.pi, 240)
 #phi = np.linspace(0, 2*np.pi, 750)
 #k = np.linspace(0, np.pi, 75)
 k_values = np.linspace(0, 0.1*np.pi, 20)
+# k_values = np.linspace(0, 0.01*np.pi, 200)
+
 #k = np.array([0, 0.01, 0.02])*np.pi
 #k = np.linspace(-3, -, 5)
 
-L = 50
+L = 20
 
 params = dict(t=t, mu=mu, Delta=Delta,
               L=L, t_J=t_J)

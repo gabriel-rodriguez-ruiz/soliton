@@ -144,8 +144,8 @@ def phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1):
     r"""Profile function for the phase soliton-antisoliton.
     y should be an ndarray
         .. math ::
-            \phi(y) = \phi_{ext} + \phi_{eq} + (2\pi-\phi_{eq})\left(\theta(y-y_0) - \theta(y-y_1) \right)
+            \phi(y) = \phi_{ext} + \phi_{eq} + 2(\pi-\phi_{eq})\left(\theta(y-y_0) - \theta(y-y_1) \right)
             
             \theta(0) = 1/2
     """
-    return phi_external + phi_eq + (2*np.pi-phi_eq)*( np.heaviside(y-y_0, 1/2) - np.heaviside(y-y_1, 1/2) )
+    return phi_external + phi_eq + 2*(np.pi-phi_eq)*( np.heaviside(y-y_0, 1/2) - np.heaviside(y-y_1, 1/2) )
