@@ -14,13 +14,13 @@ from phase_functions import phase_soliton_antisoliton_arctan, phase_single_solit
     phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi, phase_soliton_antisoliton_S_around_zero, phase_soliton_antisoliton_S_around_pi
 import scipy
 
-L_x = 201
+L_x = 200
 L_y = 200       #L_y should be odd for single soliton
 t = 1
 Delta = 1
 mu = -2  #-2
 t_J = t/2   #t
-L = 30      #L_y//2
+L = 100      #L_y//2
 n = 12 #number of eigenvalues
 lambda_J = 10
 phi_external = 0
@@ -38,8 +38,8 @@ y_s = (L_y+1)//2
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
-# Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
-Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
+Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
+# Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
 # H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
@@ -91,7 +91,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 0
+index = 2
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
