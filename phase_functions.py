@@ -127,8 +127,8 @@ def phase_single_soliton_S(phi_external, y, y_0, phi_0, lambda_J):
                 &\phi_0 \leq\phi\leq 2\pi-\phi_0
             \end{eqnarray}
     """
-    return [phi_external + 2*np.arctan(np.tan(phi_0/2)*np.tanh(np.abs(np.sin(phi_0))*(y-y_0)/lambda_J)),
-            phi_external + np.pi - 2*np.arctan(np.tan((phi_0-np.pi)/2)*np.tanh(np.abs(np.sin(phi_0))*(y-y_0)/lambda_J))]
+    return [phi_external + 2*np.arctan(np.tan(phi_0/2)*np.tanh(1/(2*np.sqrt(np.cos(phi_0)))*np.abs(np.sin(phi_0))*(y-y_0)/lambda_J)),
+            phi_external + np.pi - 2*np.arctan(np.tan((phi_0-np.pi)/2)*np.tanh(1/(2*np.sqrt(np.cos(phi_0)))*np.abs(np.sin(phi_0))*(y-y_0)/lambda_J))]
 
 def phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1):
     r"""Profile function for the phase soliton-antisoliton.
