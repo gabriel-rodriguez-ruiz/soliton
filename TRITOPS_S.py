@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 from hamiltonians import Hamiltonian_A1u_junction_k,\
-    Hamiltonian_A1u_S_junction_k, Hamiltonian_A1u_S_1D_junction_k
+    Hamiltonian_A1u_S_junction_k
 
 # Pauli matrices
 sigma_0 = np.eye(2)
@@ -43,30 +43,28 @@ def phi_spectrum(Junction, k_values, phi_values, **params):
 #%%
 
 t = 1
-t_J = t/10
-Delta = t
+t_J = 0.5*t
+Delta_A1u = 0.1*t
+Delta_S = 1
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
-#phi = np.linspace(0, 2*np.pi, 750)
-#k = np.linspace(0, np.pi, 75)
 k_values = np.linspace(0, 2*np.pi, 200)
-# k_values = np.linspace(0, 0.01*np.pi, 200)
+L_A1u = 20
+L_S = 1
+L = L_A1u + L_S
 
-#k = np.array([0, 0.01, 0.02])*np.pi
-#k = np.linspace(-3, -, 5)
-
-L = 10
-
-params = dict(t=t, mu=mu, Delta=Delta,
-              L=L, t_J=t_J)
+params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
+              L_A1u=L_A1u, L_S=L_S, t_J=t_J,
+              Delta_S=Delta_S)
 
 # E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
-E_phi = phi_spectrum(Hamiltonian_A1u_S_1D_junction_k, k_values, phi_values, **params)
+E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
 
 print('\007')  # Ending bell
 
 #%% Plotting for a given k
 
+fig, ax = plt.subplots()
 j = 5   #index of k-value
 for i in range(4*L):
     plt.plot(phi_values, E_phi[j, :, i], ".k", markersize=1)
