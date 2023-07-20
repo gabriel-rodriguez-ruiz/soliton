@@ -19,12 +19,12 @@ L_y = 200       #L_y should be odd for single soliton
 t = 1
 Delta = 1
 mu = -2*t  #-2
-t_J = t   #t
-L = 30      #L_y//2
+t_J = t/10   #t
+L = 100      #L_y//2
 n = 12 #number of eigenvalues
 lambda_J = 10
 phi_external = 0
-phi_eq = 0.08*2*np.pi
+phi_eq = 0.25*2*np.pi
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -91,7 +91,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 3
+index = 0
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)

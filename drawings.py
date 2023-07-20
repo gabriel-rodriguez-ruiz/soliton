@@ -80,7 +80,7 @@ y = np.linspace(-100, 100, 1000)
 y_0 = 0
 lambda_J = 10
 phi_external = 0
-phi_0 = 0.08*2*np.pi
+phi_0 = 0.25*2*np.pi
 
 
 Phi = phase_single_soliton_S(phi_external=phi_external, y=y, y_0=y_0, lambda_J=lambda_J, phi_0=phi_0)

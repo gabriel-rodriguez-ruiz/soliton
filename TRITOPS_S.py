@@ -9,7 +9,8 @@ Created on Thu Jul 13 11:51:06 2023
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
-from hamiltonians import Hamiltonian_A1u_junction_k, Hamiltonian_A1u_S_junction_k
+from hamiltonians import Hamiltonian_A1u_junction_k,\
+    Hamiltonian_A1u_S_junction_k, Hamiltonian_A1u_S_1D_junction_k
 
 # Pauli matrices
 sigma_0 = np.eye(2)
@@ -42,25 +43,26 @@ def phi_spectrum(Junction, k_values, phi_values, **params):
 #%%
 
 t = 1
-t_J = 1
+t_J = t/10
 Delta = t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 #phi = np.linspace(0, 2*np.pi, 750)
 #k = np.linspace(0, np.pi, 75)
-k_values = np.linspace(0, 0.1*np.pi, 20)
+k_values = np.linspace(0, 2*np.pi, 200)
 # k_values = np.linspace(0, 0.01*np.pi, 200)
 
 #k = np.array([0, 0.01, 0.02])*np.pi
 #k = np.linspace(-3, -, 5)
 
-L = 20
+L = 10
 
 params = dict(t=t, mu=mu, Delta=Delta,
               L=L, t_J=t_J)
 
-# E_phi = phi_spectrum(Hamiltonian_A1u_junction_k, k_values, phi_values, **params)
-E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
+# E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
+E_phi = phi_spectrum(Hamiltonian_A1u_S_1D_junction_k, k_values, phi_values, **params)
+
 print('\007')  # Ending bell
 
 #%% Plotting for a given k
