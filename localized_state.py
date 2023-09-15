@@ -13,7 +13,7 @@ from phase_functions import phase_soliton_antisoliton
 # Analytical parameters
 t = 1
 t_J = t/2   #t/2
-L = 31      #L_y//2
+L = 30      #L_y//2
 Delta = 1
 
 # Numerical parameters
