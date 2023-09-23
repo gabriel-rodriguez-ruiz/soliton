@@ -43,13 +43,13 @@ def phi_spectrum(Junction, k_values, phi_values, **params):
 #%%
 
 t = 1
-t_J = 0.5*t
-Delta_A1u = 0.4*t
+t_J = t
+Delta_A1u = t
 Delta_S = 0.4*t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 k_values = np.linspace(0, 2*np.pi, 200)
-L_A1u = 50
+L_A1u = 10
 L_S = 1
 L = L_A1u + L_S
 
@@ -65,7 +65,7 @@ print('\007')  # Ending bell
 #%% Plotting for a given k
 
 fig, ax = plt.subplots()
-j = 5   #index of k-value
+j = 1   #index of k-value
 for i in range(4*L):
     plt.plot(phi_values, E_phi[j, :, i], ".k", markersize=1)
 
@@ -98,7 +98,6 @@ E_0 = scipy.optimize.curve_fit(energy, xdata = phi_values, ydata = -total_energy
 fig, ax = plt.subplots()
 ax.plot(phi_values/(2*np.pi), -total_energy+total_energy[0], label="Numerical")
 ax.plot(phi_values/(2*np.pi), energy(phi_values, E_0), label=f"Analytical E_0={E_0[0]:.2}" )
-
 ax.set_xlabel(r"$\phi/(2\pi)$")
 ax.set_ylabel(r"$E(\phi)$")
 ax.set_title(r"$\phi_{eq}=$"+f"{phi_eq[0]/(2*np.pi):.2}"+r"$\times 2\pi$")
