@@ -17,9 +17,9 @@ import scipy
 L_x = 200
 L_y = 200       #L_y should be odd for single soliton
 t = 1
-Delta = 0.4*t
+Delta = 0.5*t
 mu = -2*t  #-2
-t_J = 0.2*t   #t
+t_J = 0.1*t   #t
 L = 100      #L_y//2
 n = 12 #number of eigenvalues
 lambda_J = 10

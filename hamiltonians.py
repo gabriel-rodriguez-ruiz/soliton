@@ -332,7 +332,7 @@ def Hamiltonian_A1u_semi_infinite(k, t, mu, L_x, Delta):
        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
     """
     M = np.zeros((4*L_x, 4*L_x), dtype=complex)
-    onsite = (-mu/2 - t*np.cos(k)) * np.kron(tau_z, sigma_0) + Delta/2*np.sin(k)*np.kron(tau_x, sigma_y)   # para no duplicar al sumar la traspuesta
+    onsite = 1/2*(-mu/2 - t*np.cos(k)) * np.kron(tau_z, sigma_0) + Delta/2*np.sin(k)*np.kron(tau_x, sigma_y)   # para no duplicar al sumar la traspuesta
     for i in range(1, L_x+1):
         for alpha in range(4):
             for beta in range(4):

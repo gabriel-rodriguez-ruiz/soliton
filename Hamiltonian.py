@@ -7,7 +7,7 @@ Created on Thu May 25 14:05:24 2023
 import numpy as np
 
 class Hamiltonian:
-    """A class for H_BdG hamiltonians"""
+    """A class for Bogoliubov-de-Gennes hamiltonians"""
     def __init__(self, L_x, L_y):
         self.L_x = L_x
         self.L_y = L_y

@@ -44,12 +44,12 @@ def phi_spectrum(Junction, k_values, phi_values, **params):
 
 t = 1
 t_J = 0.5*t
-Delta_A1u = 0.1*t
-Delta_S = 1
+Delta_A1u = 0.4*t
+Delta_S = 0.4*t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 k_values = np.linspace(0, 2*np.pi, 200)
-L_A1u = 20
+L_A1u = 50
 L_S = 1
 L = L_A1u + L_S
 
