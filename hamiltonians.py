@@ -588,7 +588,7 @@ def Hamiltonian_A1u_junction_k(t, k, mu, L, Delta, phi, t_J):
     M = np.zeros((4*L, 4*L), dtype=complex)
     chi_k = -mu - 2*t * np.cos(k)
     onsite_A1u = 1/4*(chi_k * np.kron(tau_z, sigma_0) + \
-            Delta*np.sin(k)* np.kron(tau_x, sigma_y) )  #divided by 1/2 because of the transpose
+            Delta*np.sin(k)* np.kron(tau_x, sigma_y) )  #divided by 2 because of the transpose
     for i in range(1, L+1):
         for alpha in range(4):
             for beta in range(4):
@@ -638,7 +638,7 @@ def Hamiltonian_A1u_S_junction_k(t, k, mu, L_A1u, L_S, Delta_A1u, Delta_S, phi, 
     
         \xi_k = -2tcos(k) - \mu
     """
-    L = L_A1u+L_S
+    L = L_A1u + L_S
     M = np.zeros((4*L, 4*L), dtype=complex)
     chi_k = -mu - 2*t * np.cos(k)
     onsite_A1u = 1/4*(chi_k * np.kron(tau_z, sigma_0) + \

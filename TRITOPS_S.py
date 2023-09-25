@@ -43,13 +43,13 @@ def phi_spectrum(Junction, k_values, phi_values, **params):
 #%%
 
 t = 1
-t_J = t
-Delta_A1u = t
-Delta_S = 0.4*t
+t_J = 0.5*t
+Delta_A1u = 0.4*t
+Delta_S = 0.01*t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 k_values = np.linspace(0, 2*np.pi, 200)
-L_A1u = 10
+L_A1u = 30
 L_S = 1
 L = L_A1u + L_S
 
@@ -57,7 +57,10 @@ params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
               L_A1u=L_A1u, L_S=L_S, t_J=t_J,
               Delta_S=Delta_S)
 
-# E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
+# params = dict(t=t, mu=mu, Delta=Delta_A1u,
+#                L=L_A1u, t_J=t_J)
+
+# E_phi = phi_spectrum(Hamiltonian_A1u_junction_k, k_values, phi_values, **params)
 E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
 
 print('\007')  # Ending bell
@@ -65,8 +68,8 @@ print('\007')  # Ending bell
 #%% Plotting for a given k
 
 fig, ax = plt.subplots()
-j = 1   #index of k-value
-for i in range(4*L):
+j = 0   #index of k-value
+for i in range(np.shape(E_phi)[2]):
     plt.plot(phi_values, E_phi[j, :, i], ".k", markersize=1)
 
 plt.title(f"k={k_values[j]}")
@@ -75,7 +78,7 @@ plt.ylabel(r"$E_k$")
 
 #%% Total energy
 
-E_positive = E_phi[:, :, 2*L:]
+E_positive = E_phi[:, :, np.shape(E_phi)[2]//2:]
 total_energy_k = np.sum(E_positive, axis=2)
 total_energy = np.sum(total_energy_k, axis=0) 
 phi_eq = phi_values[np.where(min(-total_energy)==-total_energy)]
