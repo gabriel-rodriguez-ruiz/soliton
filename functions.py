@@ -89,15 +89,23 @@ def probability_density(Hamiltonian, L_x, L_y, index):
     probability_density = np.abs(a)**2 + np.abs(b)**2 + np.abs(c)**2 + np.abs(d)**2
     return probability_density, eigenvalues, eigenvectors
 
-def phi_spectrum(Hamiltonian, Phi, t, mu, L_x, L_y, Delta, t_J, L):
+def phi_spectrum(Junction, k_values, phi_values, **params):
+    """Returns an array whose rows are the eigenvalues of the junction (with function Junction) for
+    a definite phi_value given a fixed k_value.
     """
-    Returns the phi spectrum for the six lowest energies.
-    """
-    energies = []
-    for Phi_value in Phi:
-        eigenvalues = np.linalg.eigvalsh(Hamiltonian(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi_value, L=L))
-        energies.append(eigenvalues[2*(L_x*L_y-3):2*(L_x*L_y+3)])
-    return energies
+    eigenvalues = []
+    for k_value in k_values:
+        eigenvalues_k = []
+        params["k"] = k_value
+        for phi in phi_values:
+            params["phi"] = phi
+            H = Junction(**params)
+            energies = np.linalg.eigvalsh(H)
+            energies = list(energies)
+            eigenvalues_k.append(energies)
+        eigenvalues.append(eigenvalues_k)
+    eigenvalues = np.array(eigenvalues)
+    return eigenvalues
 
 def phi_spectrum_sparse_single_step(Hamiltonian, Phi, t, mu, L_x, L_y, Delta, t_J):
     """

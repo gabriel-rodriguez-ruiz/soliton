@@ -332,7 +332,7 @@ def Hamiltonian_A1u_semi_infinite(k, t, mu, L_x, Delta):
        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
     """
     M = np.zeros((4*L_x, 4*L_x), dtype=complex)
-    onsite = 1/2*(-mu/2 - t*np.cos(k)) * np.kron(tau_z, sigma_0) + Delta/2*np.sin(k)*np.kron(tau_x, sigma_y)   # para no duplicar al sumar la traspuesta
+    onsite = 1/4*((-mu - 2*t*np.cos(k)) * np.kron(tau_z, sigma_0) + Delta*np.sin(k)*np.kron(tau_x, sigma_y) )   # para no duplicar al sumar la traspuesta
     for i in range(1, L_x+1):
         for alpha in range(4):
             for beta in range(4):
@@ -667,3 +667,35 @@ def Hamiltonian_A1u_S_junction_k(t, k, mu, L_A1u, L_S, Delta_A1u, Delta_S, phi, 
         for beta in range(4):
             M[index_k(L_A1u, alpha, L), index_k(L_A1u+1, beta, L)] = hopping_junction_x[alpha, beta]                        
     return M + M.conj().T
+
+def Hamiltonian_S(t, k, mu, L_x, Delta):
+    r"""Returns the H_k matrix for an S trivial superconductor with:
+
+    .. math::
+        H_S = \frac{1}{2} \sum_k H_{S,k}
+        
+        H_{S,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta_0 \tau_x\sigma_0 \right] + \left(
+            \sum_n^{L-1}\vec{c}^\dagger_n(-t\tau_z\sigma_0)\vec{c}_{n+1}
+            + H.c. \right)
+        
+        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    
+        \xi_k = -2tcos(k) - \mu
+    """
+    M = np.zeros((4*L_x, 4*L_x), dtype=complex)
+    chi_k = -mu - 2*t * np.cos(k)
+    onsite_S = 1/4*(chi_k * np.kron(tau_z, sigma_0) + \
+            Delta*np.kron(tau_x, sigma_0) )  #divided by 2 because of the transpose
+    for i in range(1, L_x+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L_x), index_k(i, beta, L_x)] = onsite_S[alpha, beta]
+    hopping_S = 1/2*(-t*np.kron(tau_z, sigma_0) )
+    for i in range(1, L_x):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L_x), index_k(i+1, beta, L_x)] = hopping_S[alpha, beta]
+    return (M + M.conj().T)
+

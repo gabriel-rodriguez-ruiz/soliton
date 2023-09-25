@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import scipy
 from hamiltonians import Hamiltonian_A1u_junction_k,\
     Hamiltonian_A1u_S_junction_k
+from functions import phi_spectrum
 
 # Pauli matrices
 sigma_0 = np.eye(2)
@@ -22,35 +23,20 @@ tau_x = np.array([[0, 1], [1, 0]])
 tau_y = np.array([[0, -1j], [1j, 0]])
 tau_z = np.array([[1, 0], [0, -1]])
 
-def phi_spectrum(Junction, k_values, phi_values, **params):
-    """Returns an array whose rows are the eigenvalues of the junction (with function Junction) for
-    a definite phi_value given a fixed k_value.
-    """
-    eigenvalues = []
-    for k_value in k_values:
-        eigenvalues_k = []
-        params["k"] = k_value
-        for phi in phi_values:
-            params["phi"] = phi
-            H = Junction(**params)
-            energies = np.linalg.eigvalsh(H)
-            energies = list(energies)
-            eigenvalues_k.append(energies)
-        eigenvalues.append(eigenvalues_k)
-    eigenvalues = np.array(eigenvalues)
-    return eigenvalues
-
 #%%
 
 t = 1
-t_J = 0.5*t
-Delta_A1u = t
+t_J = 0
+Delta_A1u = 1*t
 Delta_S = 0.1*t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
-k_values = np.linspace(0, 2*np.pi, 200)
-L_A1u = 30
-L_S = 1
+# k_values = np.linspace(0, 2*np.pi, 200)
+# k_values = np.linspace(0, np.pi/100, 10)
+k_values = np.linspace(0, np.pi/4, 10)
+
+L_A1u = 100
+L_S = 1    
 L = L_A1u + L_S
 
 params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
@@ -58,7 +44,7 @@ params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
               Delta_S=Delta_S)
 
 # params = dict(t=t, mu=mu, Delta=Delta_A1u,
-#                L=L_A1u, t_J=t_J)
+#                 L=L_A1u, t_J=t_J)
 
 # E_phi = phi_spectrum(Hamiltonian_A1u_junction_k, k_values, phi_values, **params)
 E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
@@ -86,12 +72,22 @@ phi_eq = phi_values[np.where(min(-total_energy)==-total_energy)]
 #%% Josephson current
 
 Josephson_current = np.diff(-total_energy)
+Josephson_current_k = np.diff(-total_energy_k)
+
 J_0 = np.max(Josephson_current) 
 fig, ax = plt.subplots()
 ax.plot(phi_values[:-1]/(2*np.pi), Josephson_current/J_0)
 ax.set_xlabel(r"$\phi/(2\pi)$")
 ax.set_ylabel(r"$J(\phi)/J_0$")
 ax.set_title("Josephson current")
+
+fig, ax = plt.subplots()
+ax.set_xlabel(r"$\phi/(2\pi)$")
+ax.set_ylabel(r"$J_k(\phi)$")
+ax.set_title("Josephson current for given k")
+
+for i, k in enumerate(k_values):
+    ax.plot(phi_values[:-1]/(2*np.pi), Josephson_current_k[i,:])
 
 #%% Plotting of total energy
 def energy(phi_values, E_0):
