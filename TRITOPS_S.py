@@ -26,8 +26,8 @@ tau_z = np.array([[1, 0], [0, -1]])
 #%%
 
 t = 1
-t_J = 0
-Delta_A1u = 1*t
+t_J = t/2
+Delta_A1u = 0.1*t
 Delta_S = 0.1*t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
@@ -54,7 +54,7 @@ print('\007')  # Ending bell
 #%% Plotting for a given k
 
 fig, ax = plt.subplots()
-j = 0   #index of k-value
+j = 1   #index of k-value
 for i in range(np.shape(E_phi)[2]):
     plt.plot(phi_values, E_phi[j, :, i], ".k", markersize=1)
 
