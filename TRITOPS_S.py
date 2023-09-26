@@ -26,17 +26,17 @@ tau_z = np.array([[1, 0], [0, -1]])
 #%%
 
 t = 1
-t_J = t/2
-Delta_A1u = 0.1*t
-Delta_S = 0.1*t
+t_J = 2*t
+Delta_A1u = 0.25*t
+Delta_S = 0.15*t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 # k_values = np.linspace(0, 2*np.pi, 200)
 # k_values = np.linspace(0, np.pi/100, 10)
-k_values = np.linspace(0, np.pi/4, 10)
+k_values = np.linspace(0, 0.1*np.pi, 20)
 
-L_A1u = 100
-L_S = 1    
+L_A1u = 20
+L_S = 10 
 L = L_A1u + L_S
 
 params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
@@ -54,7 +54,7 @@ print('\007')  # Ending bell
 #%% Plotting for a given k
 
 fig, ax = plt.subplots()
-j = 1   #index of k-value
+j = 5   #index of k-value
 for i in range(np.shape(E_phi)[2]):
     plt.plot(phi_values, E_phi[j, :, i], ".k", markersize=1)
 
