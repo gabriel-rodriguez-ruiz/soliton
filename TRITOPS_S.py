@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 from hamiltonians import Hamiltonian_A1u_junction_k,\
-    Hamiltonian_A1u_S_junction_k
+    Hamiltonian_A1u_S_junction_k, Hamiltonian_S_S_junction_k
 from functions import phi_spectrum
 
 # Pauli matrices
@@ -26,28 +26,40 @@ tau_z = np.array([[1, 0], [0, -1]])
 #%%
 
 t = 1
-t_J = t
-Delta_A1u = 0.5*t
-Delta_S = 0.25*t
+t_J = t/2
+Delta_A1u = 2*t
+Delta_S = t
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 # k_values = np.linspace(0, 2*np.pi, 200)
 # k_values = np.linspace(0, np.pi/100, 10)
 k_values = np.linspace(0, np.pi, 20)
 
-L_A1u = 100
+# A1u-S junction
+L_A1u = 10
 L_S = 1 
 L = L_A1u + L_S
-
 params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
               L_A1u=L_A1u, L_S=L_S, t_J=t_J,
               Delta_S=Delta_S)
 
+# S-S junction
+# Delta_S_1 = t/2
+# Delta_S_2 = Delta_S_1
+# L_S_1 = 10
+# L_S_2 = L_S_1
+# params = dict(t=t, mu=mu,
+#                 L_S_1=L_S_1, L_S_2=L_S_2,
+#                 Delta_S_1=Delta_S_1, Delta_S_2=Delta_S_2,
+#                 t_J=t_J)
+
+# A1u-A1u junction
 # params = dict(t=t, mu=mu, Delta=Delta_A1u,
 #                 L=L_A1u, t_J=t_J)
 
-# E_phi = phi_spectrum(Hamiltonian_A1u_junction_k, k_values, phi_values, **params)
 E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
+# E_phi = phi_spectrum(Hamiltonian_A1u_junction_k, k_values, phi_values, **params)
+# E_phi = phi_spectrum(Hamiltonian_S_S_junction_k, k_values, phi_values, **params)
 
 print('\007')  # Ending bell
 
