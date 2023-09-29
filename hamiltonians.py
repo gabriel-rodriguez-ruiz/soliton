@@ -748,3 +748,63 @@ def Hamiltonian_S_S_junction_k(t, k, mu, L_S_1, L_S_2, Delta_S_1, Delta_S_2, phi
         for beta in range(4):
             M[index_k(L_S_1, alpha, L), index_k(L_S_1+1, beta, L)] = hopping_junction_x[alpha, beta]                        
     return M + M.conj().T
+
+def Hamiltonian_ZKM_S_junction_k(t, k, mu, L_ZKM, L_S, Delta_0, Delta_1, phi, t_J, Lambda):
+    r"""Returns the H_k matrix for junction between A1u and S superconductors with:
+
+    .. math::
+        H = \sum_k \frac{1}{2} (H_k^{S1} + H_k^{S2} + H_{J,k} )
+
+        H_{ZKM} = \frac{1}{2}\sum_k H_{A1u,k}
+        
+        H_{ZKM,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 -2\lambda sin(k_y)\tau_z\sigma_x +
+            (\Delta_0 + 2\Delta_1 cos(k) )\tau_x\sigma_0 \right] +
+            \sum_n^{L-1}\left(\vec{c}^\dagger_n(-t\tau_z\sigma_0 -i\lambda \tau_z\sigma_z +\Delta_1\tau_x\sigma_0)\vec{c}_{n+1}
+            + H.c. \right)
+                
+        H_{J,k} = t_J\vec{c}_{S1,k,L}^{\dagger}\left( 
+            \frac{\tau^z+\tau^0}{2} e^{i\phi/2} + \frac{\tau^z-\tau^0}{2} e^{-i\phi/2}
+            \right)\vec{c}_{S2,k,1} + H.c.            
+        
+        H_S = \frac{1}{2} \sum_k H_{S,k}
+        
+        H_{S,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta_0 \tau_x\sigma_0 \right] + \left(
+            \sum_n^{L-1}\vec{c}^\dagger_n(-t\tau_z\sigma_0)\vec{c}_{n+1}
+            + H.c. \right)
+        
+        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    
+        \xi_k = -2tcos(k) - \mu
+    """
+    L = L_ZKM + L_S
+    M = np.zeros((4*L, 4*L), dtype=complex)
+    chi_k = -mu - 2*t * np.cos(k)
+    onsite_ZKM = 1/4*(chi_k * np.kron(tau_z, sigma_0) +\
+            -2 Lambda*Delta_A1u *np.sin(k)* np.kron(tau_z, sigma_x) )
+    for i in range(1, L_A1u+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, beta, L)] = onsite_A1u[alpha, beta]
+    onsite_S = 1/4*(chi_k * np.kron(tau_z, sigma_0) + Delta_S*np.kron(tau_x, sigma_0) ) # I divide by 1/2 because of the transpose
+    for i in range(L_A1u+1, L+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, beta, L)] = onsite_S[alpha, beta]
+    hopping_A1u = 1/2*(-t*np.kron(tau_z, sigma_0) - 1j*Delta_A1u/2 * np.kron(tau_x, sigma_x) )
+    for i in range(1, L_A1u):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_A1u[alpha, beta]
+    hopping_S = 1/2*(-t*np.kron(tau_z, sigma_0) )
+    for i in range(L_A1u+1, L):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_S[alpha, beta]
+    hopping_junction_x = t_J/2 * (np.cos(phi/2)*np.kron(tau_z, sigma_0)+1j*np.sin(phi/2)*np.kron(tau_0, sigma_0))
+    for alpha in range(4):
+        for beta in range(4):
+            M[index_k(L_A1u, alpha, L), index_k(L_A1u+1, beta, L)] = hopping_junction_x[alpha, beta]                        
+    return M + M.conj().T
