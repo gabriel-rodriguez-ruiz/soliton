@@ -28,19 +28,32 @@ tau_z = np.array([[1, 0], [0, -1]])
 
 t = 1
 t_J = t/2
-Delta_A1u = t/2
-Delta_S = Delta_A1u/2
+# Delta_A1u = t/2
+Delta_1 = t/2
+Delta_0 = Delta_1
+Lambda = 0.5*t
+# Delta_S = Delta_A1u/2
+# Delta_S = Delta_A1u/2
+
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
 k_values = np.linspace(0, 0.01*np.pi, 20)
 
 # A1u-S junction
-L_A1u = 20
+# L_A1u = 20
+# L_S = 20 
+# L = L_A1u + L_S
+# params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
+#               L_A1u=L_A1u, L_S=L_S, t_J=t_J,
+#               Delta_S=Delta_S)
+
+# ZKM-S junction
+L_ZKM = 20
 L_S = 20 
-L = L_A1u + L_S
-params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
-              L_A1u=L_A1u, L_S=L_S, t_J=t_J,
-              Delta_S=Delta_S)
+L = L_ZKM + L_S
+params = dict(t=t, mu=mu,
+              L_ZKM=L_ZKM, L_S=L_S, t_J=t_J,
+              Delta_0=Delta_0, Delta_1=Delta_1)
 
 # S-S junction
 # Delta_S_1 = t/2
