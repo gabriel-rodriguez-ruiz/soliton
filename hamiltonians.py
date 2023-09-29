@@ -749,18 +749,18 @@ def Hamiltonian_S_S_junction_k(t, k, mu, L_S_1, L_S_2, Delta_S_1, Delta_S_2, phi
             M[index_k(L_S_1, alpha, L), index_k(L_S_1+1, beta, L)] = hopping_junction_x[alpha, beta]                        
     return M + M.conj().T
 
-def Hamiltonian_A1us_S_junction_k(t, k, mu, L_A1u, L_S, Delta_A1u, Delta_S, phi, t_J):
-    r"""Returns the H_k matrix for junction bewtween A1u (with s-wave superconductivity) and S superconductors with:
-
+def Hamiltonian_ZKM_S_junction_k(t, k, mu, L_ZKM, L_S, Delta_0, Delta_1, phi, t_J, Lambda):
+    r"""Returns the H_k matrix for junction between A1u and S superconductors with:
+        
     .. math::
         H = \sum_k \frac{1}{2} (H_k^{S1} + H_k^{S2} + H_{J,k} )
-
-        H_{A1us} = \frac{1}{2}\sum_k H_{A1us,k}
         
-        H_{A1us,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
-            \xi_k\tau_z\sigma_0 +
-            \Delta sin(k_y)\tau_x\sigma_y + \Delta_0 \tau_x\sigma_0\right] +
-            \sum_n^{L-1}\left(\vec{c}^\dagger_n(-t\tau_z\sigma_0 + \frac{\Delta}{2i}\tau_x\sigma_x)\vec{c}_{n+1}
+        H_{ZKM} = \frac{1}{2}\sum_k H_{A1u,k}
+        
+        H_{ZKM,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 -2\lambda sin(k_y)\tau_z\sigma_x +
+            (\Delta_0 + 2\Delta_1 cos(k) )\tau_x\sigma_0 \right] +
+            \sum_n^{L-1}\left(\vec{c}^\dagger_n(-t\tau_z\sigma_0 -i\lambda \tau_z\sigma_z +\Delta_1\tau_x\sigma_0)\vec{c}_{n+1}
             + H.c. \right)
                 
         H_{J,k} = t_J\vec{c}_{S1,k,L}^{\dagger}\left( 
@@ -779,12 +779,11 @@ def Hamiltonian_A1us_S_junction_k(t, k, mu, L_A1u, L_S, Delta_A1u, Delta_S, phi,
     
         \xi_k = -2tcos(k) - \mu
     """
-    L = L_A1u + L_S
+    L = L_ZKM + L_S
     M = np.zeros((4*L, 4*L), dtype=complex)
     chi_k = -mu - 2*t * np.cos(k)
-    onsite_A1u = 1/4*(chi_k * np.kron(tau_z, sigma_0) + \
-            Delta_A1u*np.sin(k) * np.kron(tau_x, sigma_y) +
-            Delta_S * np.kron(tau_x, sigma_0))
+    onsite_ZKM = 1/4*(chi_k * np.kron(tau_z, sigma_0) -\
+            2*Lambda*Delta_A1u *np.sin(k)* np.kron(tau_z, sigma_x) )
     for i in range(1, L_A1u+1):
         for alpha in range(4):
             for beta in range(4):
