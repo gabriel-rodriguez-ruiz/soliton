@@ -27,34 +27,33 @@ tau_z = np.array([[1, 0], [0, -1]])
 #%%
 
 t = 1
-t_J = t/2
-# Delta_A1u = t/2
-Delta_1 = -0.2*t
-Delta_0 = 0.4*t
-Lambda = t/2
-# Delta_S = Delta_A1u/2
-# Delta_S = Delta_A1u/2
+t_J = t/10
+Delta_A1u = t/5
+# Delta_1 = -0.2*t
+# Delta_0 = 0.4*t
+# Lambda = t/2
+Delta_S = t/10
 
 mu = -2*t
 phi_values = np.linspace(0, 2*np.pi, 240)
-k_values = np.linspace(0, 0.5*np.pi/2, 20)
+k_values = np.linspace(0, np.pi, 100)
 
 # A1u-S junction
-# L_A1u = 20
-# L_S = 20 
-# L = L_A1u + L_S
-# params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
-#               L_A1u=L_A1u, L_S=L_S, t_J=t_J,
-#               Delta_S=Delta_S)
+L_A1u = 50
+L_S = 1
+L = L_A1u + L_S
+params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
+              L_A1u=L_A1u, L_S=L_S, t_J=t_J,
+              Delta_S=Delta_S)
 
 # ZKM-S junction
-L_ZKM = 20
-L_S = 20 
-L = L_ZKM + L_S
-params = dict(t=t, mu=mu,
-              L_ZKM=L_ZKM, L_S=L_S, t_J=t_J,
-              Delta_0=Delta_0, Delta_1=Delta_1,
-              Lambda=Lambda)
+# L_ZKM = 20
+# L_S = 20 
+# L = L_ZKM + L_S
+# params = dict(t=t, mu=mu,
+#               L_ZKM=L_ZKM, L_S=L_S, t_J=t_J,
+#               Delta_0=Delta_0, Delta_1=Delta_1,
+#               Lambda=Lambda)
 
 # S-S junction
 # Delta_S_1 = t/2
@@ -70,9 +69,9 @@ params = dict(t=t, mu=mu,
 # params = dict(t=t, mu=mu, Delta=Delta_A1u,
 #                 L=L_A1u, t_J=t_J)
 
-E_phi = phi_spectrum(Hamiltonian_ZKM_S_junction_k, k_values, phi_values, **params)
+# E_phi = phi_spectrum(Hamiltonian_ZKM_S_junction_k, k_values, phi_values, **params)
 # E_phi = phi_spectrum(Hamiltonian_A1u_S_junction_k, k_values, phi_values, **params)
-#E_phi = phi_spectrum(Hamiltonian_A1us_S_junction_k, k_values, phi_values, **params)
+E_phi = phi_spectrum(Hamiltonian_A1us_S_junction_k, k_values, phi_values, **params)
 # E_phi = phi_spectrum(Hamiltonian_A1u_junction_k, k_values, phi_values, **params)
 # E_phi = phi_spectrum(Hamiltonian_S_S_junction_k, k_values, phi_values, **params)
 
@@ -81,7 +80,7 @@ print('\007')  # Ending bell
 #%% Plotting for a given k
 
 fig, ax = plt.subplots()
-j = 5   #index of k-value
+j = 0   #index of k-value
 for i in range(np.shape(E_phi)[2]):
     plt.plot(phi_values, E_phi[j, :, i], ".k", markersize=1)
 
@@ -117,6 +116,20 @@ for i, k in enumerate(k_values):
     ax.plot(phi_values[:-1]/(2*np.pi), Josephson_current_k[i,:])
 
 #%% Plotting of total energy
+
+plt.rc("font", family="serif")  # set font family
+plt.rc("xtick", labelsize="large")  # reduced tick label size
+plt.rc("ytick", labelsize="large")
+plt.rc('font', size=18) #controls default text size
+plt.rc('axes', titlesize=18) #fontsize of the title
+plt.rc('axes', labelsize=18) #fontsize of the x and y labels
+plt.rc("text", usetex=True) # for better LaTex (slower)
+plt.rcParams['xtick.top'] = True    #ticks on top
+plt.rcParams['xtick.labeltop'] = False
+plt.rcParams['ytick.right'] = True    #ticks on left
+plt.rcParams['ytick.labelright'] = False
+plt.rc('legend', fontsize=18) #fontsize of the legend
+
 def energy(phi_values, E_0):
     return E_0*(4*np.cos(phi_eq[0])*(1-np.cos(phi_values))-2*np.sin(phi_values)**2) 
 
@@ -128,4 +141,5 @@ ax.set_xlabel(r"$\phi/(2\pi)$")
 ax.set_ylabel(r"$E(\phi)$")
 ax.set_title(r"$\phi_{eq}=$"+f"{phi_eq[0]/(2*np.pi):.2}"+r"$\times 2\pi$")
 
-plt.legend()
+# plt.legend()
+plt.tight_layout()
