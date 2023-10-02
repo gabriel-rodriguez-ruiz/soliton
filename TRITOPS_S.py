@@ -139,7 +139,7 @@ ax.plot(phi_values/(2*np.pi), -total_energy+total_energy[0], label="Numerical")
 ax.plot(phi_values/(2*np.pi), energy(phi_values, E_0), label=f"Analytical E_0={E_0[0]:.2}" )
 ax.set_xlabel(r"$\phi/(2\pi)$")
 ax.set_ylabel(r"$E(\phi)$")
-ax.set_title(r"$\phi_{eq}=$"+f"{phi_eq[0]/(2*np.pi):.2}"+r"$\times 2\pi$")
+ax.set_title(r"$\phi_{0}=$"+f"{(2*np.pi-phi_eq[0])/(2*np.pi):.2}"+r"$\times 2\pi$")
 
 # plt.legend()
 plt.tight_layout()

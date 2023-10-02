@@ -121,7 +121,7 @@ def phase_single_soliton_S(phi_external, y, y_0, phi_0, lambda_J):
     y should be an ndarray
         .. math ::
             \begin{eqnarray}
-                &\phi_1(x) = 2\arctan \left[ \tan\left(\frac{\phi_{0}}{2}\right)\tanh\left( \sqrt{E_0}|\sin \phi_{0}| \frac{x-x_1}{\lambda_J} \right) \right]\\
+                &\phi_1(x) = 2\arctan \left[ \tan\left(\frac{\phi_{0}}{2}\right)\tanh\left( \frac{|\sin \phi_{0}|}{2\sqrt{cos(\phi_0)}} \frac{x-x_1}{\lambda_J} \right) \right]\\
                 &-\phi_0 \leq\phi\leq \phi_0\\
                 &\phi_2(x) = \pi - 2\arctan \left[ \tan\left(\frac{\phi_{0}-\pi}{2}\right)\tanh\left( \sqrt{E_0}|\sin \phi_{0}| \frac{x-x_2}{\lambda_J} \right) \right]\\
                 &\phi_0 \leq\phi\leq 2\pi-\phi_0
