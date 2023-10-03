@@ -8,7 +8,7 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic
+from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1us_S_sparse
 from functions import get_components
 from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S_around_zero, \
     phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi, phase_soliton_antisoliton_S_around_zero, phase_soliton_antisoliton_S_around_pi
@@ -17,14 +17,15 @@ import scipy
 L_x = 200
 L_y = 200       #L_y should be odd for single soliton
 t = 1
-Delta = 0.5*t
+Delta = t/5
+Delta_0 = t/10
 mu = -2*t  #-2
-t_J = 0.1*t   #t
+t_J = t/10   #t
 L = 100      #L_y//2
 n = 12 #number of eigenvalues
-lambda_J = 10
+# lambda_J = 10
 phi_external = 0
-# phi_eq = 0.25*2*np.pi
+phi_eq = 0.14*2*np.pi
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -33,8 +34,8 @@ y_s = (L_y+1)//2
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
 # Phi = phase_single_soliton(phi_external, y, y_s)
 # Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
-# Phi = 2*np.pi * np.ones_like(y)
-Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
+Phi = phi_eq * np.ones_like(y)
+# Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
@@ -42,13 +43,13 @@ Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
-H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
+# H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-
+H =  Hamiltonian_A1us_S_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0) 
 
 #%% Probability density
