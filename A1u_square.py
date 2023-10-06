@@ -13,9 +13,9 @@ import scipy
 L_x = 200
 L_y = 200
 t = 1
-Delta = 1
-mu = -2
-k = 8
+Delta = t
+mu = -2*t
+k = 24
 
 H = Hamiltonian_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta)
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
