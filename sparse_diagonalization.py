@@ -33,10 +33,10 @@ y_1 = (L_y+L)//2
 y_s = (L_y+1)//2
 
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
-# Phi = phase_single_soliton(phi_external, y, y_s)
+Phi = phase_single_soliton(phi_external, y, y_s)
 # Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 # Phi = phi_eq * np.ones_like(y)
-Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
+# Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
