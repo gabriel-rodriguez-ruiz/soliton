@@ -124,8 +124,8 @@ ax.set_ylabel("E")
 
 #%% Plotting E vs. L
 import numpy as np
-from phase_functions import phase_soliton_antisoliton
-from hamiltonians import Hamiltonian_A1u, Hamiltonian_A1us_junction_sparse, Hamiltonian_A1us_junction_sparse_periodic
+from phase_functions import phase_soliton_antisoliton, phase_single_soliton
+from hamiltonians import Hamiltonian_A1u, Hamiltonian_A1us_junction_sparse, Hamiltonian_A1us_junction_sparse_periodic, Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y
 
 L_x = 200
 L_y = 200
@@ -145,9 +145,12 @@ eigenvalues = []
 for L_value in L_values:
     y_0 = (L_y-L_value)//2
     y_1 = (L_y+L_value)//2
+    y_s = L_value
     Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
-    H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+    # Phi = phase_single_soliton(phi_external, y, y_s)
+    # H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
     # H = Hamiltonian_A1us_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+    H = Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
     eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
     eigenvalues_sparse.sort()
     eigenvalues.append(eigenvalues_sparse)
@@ -161,14 +164,14 @@ fig, ax = plt.subplots()
 #ax.plot(L_y_values, [eigenvalues[i][0::1] for i in range(len(L_y_values))], "*", alpha=0.5, markersize=5)
 #ax.plot(L_values, [eigenvalues[i][0] for i in range(len(L_values))], "or", alpha=0.5, markersize=5)
 # ax.plot(L_values, [eigenvalues[i][1] for i in range(len(L_values))], "ob", alpha=0.5, markersize=5)
-ax.plot(L_values, E_numerical[6], "o", label="Numerical")
-ax.plot(L_values, E_numerical[8], "o", label="Numerical")
-ax.plot(L_values, E_numerical[10], "o", label="Numerical")
-
-# ax.plot(L_values, [np.abs(eigenvalues[i][3]) for i in range(len(L_values))], "oy", alpha=0.5, markersize=5)
+# ax.plot(L_values, E_numerical[6], "o", label="Numerical")
+# ax.plot(L_values, E_numerical[8], "o", label="Numerical")
+# ax.plot(L_values, E_numerical[10], "o", label="Numerical")
+for i in range(len(index)):
+    ax.plot(L_values, E_numerical[i], "*", label="Numerical")
 
 ax.set_xlabel(r"$L$")
-#plt.yscale('log')
+plt.yscale('log')
 ax.set_ylabel("E")
 
 from analytical_solution import Kappa

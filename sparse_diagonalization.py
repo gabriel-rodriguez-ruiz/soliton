@@ -31,17 +31,17 @@ y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
 y_s = (L_y+1)//2
-
+# y_s = L
 # Phi = phi_profile(phi_external, y, L_y//2, lambda_J)
 # Phi = phase_single_soliton(phi_external, y, y_s)
 # Phi = phase_single_soliton_arctan(phi_external, y, y_s, lambda_J)
 # Phi = phi_eq * np.ones_like(y)
-Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
+# Phi = phase_soliton_antisoliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_arctan(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_soliton_antisoliton_arctan_A1u_S_around_zero(phi_external, y, y_0, y_1, lambda_J)
 # Phi = phase_antisoliton_soliton(phi_external, y, y_0, y_1)
 # Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
-# Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
+Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
 # H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
@@ -50,9 +50,9 @@ params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, 
 # H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-# H =  Hamiltonian_A1us_S_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+H =  Hamiltonian_A1us_S_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
-H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+# H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0) 
 
 #%% Probability density
