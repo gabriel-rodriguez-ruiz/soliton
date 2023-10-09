@@ -8,25 +8,25 @@ Created on Wed Feb  8 14:44:35 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1us_S_sparse, Hamiltonian_A1us_junction_sparse, Hamiltonian_A1us_junction_sparse_periodic, Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y
+from hamiltonians import Hamiltonian_A1u_junction_sparse, Hamiltonian_A1u_S, Hamiltonian_A1u_junction_sparse_periodic, Hamiltonian_A1u_S_periodic, Hamiltonian_A1us_S_sparse, Hamiltonian_A1us_junction_sparse, Hamiltonian_A1us_junction_sparse_periodic, Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y, Hamiltonian_A1us_S_sparse_periodic, Hamiltonian_A1us_S_sparse_extended
 from functions import get_components
 from phase_functions import phase_soliton_antisoliton_arctan, phase_single_soliton, phase_single_soliton_arctan, phase_soliton_soliton_arctan, phase_soliton_antisoliton, phase_soliton_antisoliton_arctan_A1u_S_around_zero, \
     phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi, phase_soliton_antisoliton_S_around_zero, phase_soliton_antisoliton_S_around_pi
 import scipy
 
-L_x = 200
+L_x = 100
 L_y = 200       #L_y should be odd for single soliton
 t = 1
-# Delta = t/5
-Delta = t/2
+Delta = t/3    # TRITOPS-S      t/5
+# Delta = t/2   #TRITOPS-TRITOPS
 Delta_0 = t/10
 mu = -2*t  #-2
-t_J = t/10   #t
+t_J = t/10   #t/10
 L = 100      #L_y//2
 n = 12 #number of eigenvalues
 # lambda_J = 10
 phi_external = 0
-phi_eq = 0.14*2*np.pi
+phi_eq = 0.08*2*np.pi    #0.14*2*np.pi
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -50,9 +50,12 @@ params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, 
 # H = Hamiltonian_A1u_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic_in_x(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
-H =  Hamiltonian_A1us_S_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+# H =  Hamiltonian_A1us_S_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+# H =  Hamiltonian_A1us_S_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+H =  Hamiltonian_A1us_S_sparse_extended(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0) 
 
 #%% Probability density
