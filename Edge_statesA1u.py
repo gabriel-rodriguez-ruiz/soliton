@@ -20,7 +20,8 @@ params = dict(t=t, mu=mu, Delta=Delta,
               L_x=L_x)
 
 spectrum_A1u = spectrum(Hamiltonian_A1u_semi_infinite, k, **params)
-
+H = Hamiltonian_A1u_semi_infinite(k=0.1, **params)
+eigenvalues, eigenvectors = np.linalg.eigh(H)
 #%% Plotting of spectrum
 # plt.close()
 
