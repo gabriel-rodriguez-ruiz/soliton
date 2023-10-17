@@ -14,15 +14,15 @@ from phase_functions import phase_soliton_antisoliton_arctan, phase_single_solit
     phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi, phase_soliton_antisoliton_S_around_zero, phase_soliton_antisoliton_S_around_pi
 import scipy
 
-L_x = 200
-L_y = 200       #L_y should be odd for single soliton
+L_x = 100
+L_y = 50       #L_y should be odd for single soliton
 t = 1
-Delta = t/5    # TRITOPS-S      t/5
+Delta = t/2    # TRITOPS-S      t/5
 # Delta = t/2   #TRITOPS-TRITOPS
 Delta_0 = t/10      #t/10
 mu = -2*t  #-2
 t_J = t/10   #t/10
-L = 90      #L_y//2
+L = 24      #L_y//2
 n = 12 #number of eigenvalues
 # lambda_J = 10
 phi_external = 0
@@ -54,8 +54,8 @@ params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, 
 # H = Hamiltonian_A1us_junction_sparse_periodic_in_x_and_y(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H =  Hamiltonian_A1us_S_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
-H =  Hamiltonian_A1us_S_sparse_extended(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
-# H =  Hamiltonian_A1us_S_sparse_extended_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+# H =  Hamiltonian_A1us_S_sparse_extended(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+H =  Hamiltonian_A1us_S_sparse_extended_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0) 
 
@@ -99,7 +99,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 0
+index = 4
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -119,7 +119,7 @@ ax.plot(y, probability_density_right, "o")
 ax.set_xlabel(r"$\ell$")
 ax.set_ylabel("Probability density at the junction")
 ax.text(5,25, rf'$index={index}$')
-ax.set_xticks([1,50,100,150,200])
+# ax.set_xticks([1,50,100,150,200])
 # ax.set_title("Probability density at the junction")
 # plt.tight_layout()
 

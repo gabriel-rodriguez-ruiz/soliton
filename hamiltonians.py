@@ -1327,3 +1327,35 @@ def Hamiltonian_A1us_S_sparse_extended_periodic(t, mu, L_x, L_y, Delta, Delta_0,
            for beta in range(4):
                M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
    return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def Hamiltonian_A1us_k(t, k, mu, L, Delta_A1u, Delta_S):
+    r"""Returns the H_k matrix for A1u (with s-wave superconductivity) with:
+    
+    .. math::
+        H_{A1us} = \frac{1}{2}\sum_k H_{A1us,k}
+        
+        H_{A1us,k} = \sum_n^L \vec{c}^\dagger_n\left[ 
+            \xi_k\tau_z\sigma_0 +
+            \Delta sin(k_y)\tau_x\sigma_y + \Delta_0 \tau_x\sigma_0\right] +
+            \sum_n^{L-1}\left(\vec{c}^\dagger_n(-t\tau_z\sigma_0 + \frac{\Delta}{2i}\tau_x\sigma_x)\vec{c}_{n+1}
+            + H.c. \right)
+        
+        \vec{c} = (c_{k,\uparrow}, c_{k,\downarrow},c^\dagger_{-k,\downarrow},-c^\dagger_{-k,\uparrow})^T
+    
+        \xi_k = -2tcos(k) - \mu
+    """
+    M = np.zeros((4*L, 4*L), dtype=complex)
+    chi_k = -mu - 2*t * np.cos(k)
+    onsite_A1u = 1/4*(chi_k * np.kron(tau_z, sigma_0) + \
+            Delta_A1u*np.sin(k) * np.kron(tau_x, sigma_y) +
+            Delta_S * np.kron(tau_x, sigma_0))
+    for i in range(1, L+1):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i, beta, L)] = onsite_A1u[alpha, beta]
+    hopping_A1u = 1/2*(-t*np.kron(tau_z, sigma_0) - 1j*Delta_A1u/2 * np.kron(tau_x, sigma_x) )
+    for i in range(1, L):
+        for alpha in range(4):
+            for beta in range(4):
+                M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_A1u[alpha, beta]
+    return M + M.conj().T

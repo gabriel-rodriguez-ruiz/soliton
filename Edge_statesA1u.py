@@ -7,11 +7,11 @@ Created on Sun Sep 17 14:12:52 2023
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
-from hamiltonians import Hamiltonian_A1u_semi_infinite
+from hamiltonians import Hamiltonian_A1u_semi_infinite, Hamiltonian_A1us_k, Hamiltonian_A1us_S_junction_k
 from functions import spectrum
 
 t = 1
-Delta = 1*t  #1
+Delta = t/2  #1
 mu = -2*t     #mu = -3  entre -4t y 4t hay estados de borde
 k = np.linspace(0, np.pi, 150)
 L_x = 100  #200
@@ -19,9 +19,14 @@ L_x = 100  #200
 params = dict(t=t, mu=mu, Delta=Delta,
               L_x=L_x)
 
-spectrum_A1u = spectrum(Hamiltonian_A1u_semi_infinite, k, **params)
-H = Hamiltonian_A1u_semi_infinite(k=0.1, **params)
-eigenvalues, eigenvectors = np.linalg.eigh(H)
+Delta_0 = t/10
+t_J = t
+# spectrum_A1u = spectrum(Hamiltonian_A1u_semi_infinite, k, **params)
+# spectrum_A1u = spectrum(Hamiltonian_A1us_k, k, t=t, mu=mu, L=L_x, Delta_A1u=Delta, Delta_S=Delta_0)
+spectrum_A1u = spectrum(Hamiltonian_A1us_S_junction_k, k, t=t, mu=mu, L_A1u=L_x//2, L_S=L_x//2, Delta_A1u=Delta, Delta_S=Delta_0, phi=0, t_J=t_J)
+
+# H = Hamiltonian_A1u_semi_infinite(k=0.1, **params)
+# eigenvalues, eigenvectors = np.linalg.eigh(H)
 #%% Plotting of spectrum
 # plt.close()
 
@@ -44,7 +49,6 @@ ax.plot(
     k[:45], spectrum_A1u[:45, 2*L_x-2:2*L_x+2], linewidth=1, color="c"
 )  # each column in spectrum is a separate dataset
 
-ax.set_ylim((-7, 7))
 ax.set_xlim((0, np.pi))
 ax.set_xticks(np.arange(0, 1.2, step=0.2) * np.pi)
 ax.set_xticklabels(
@@ -54,5 +58,6 @@ ax.set_yticks(np.arange(-6, 7, step=2))
 ax.set_yticks(np.arange(-6, 7, step=1), minor=True)
 ax.set_xlabel(r"$k_y/\pi$")
 ax.set_ylabel(r"$E(k_y)$")
+ax.set_ylim((-3, 3))
 
 plt.tight_layout()
