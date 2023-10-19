@@ -21,7 +21,7 @@ Delta = t/2    # TRITOPS-S      t/5
 # Delta = t/2   #TRITOPS-TRITOPS
 Delta_0 = t/10      #t/10
 mu = -2*t  #-2
-t_J = t/10   #t/10
+t_J = t/2   #t/10
 L = 24      #L_y//2
 n = 12 #number of eigenvalues
 # lambda_J = 10
@@ -99,7 +99,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 4
+index = 2
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -110,11 +110,12 @@ ax.set_ylabel("y")
 #plt.plot(probability_density[10,:,0])
 ax.set_title("Probability density")
 plt.tight_layout()
-probability_density_right = probability_density[index][:, L_x//2]/np.linalg.norm(probability_density[index][:, L_x//2])  #The y-axis is inverted
+# probability_density_right = probability_density[index][:, L_x//2]/np.linalg.norm(probability_density[index][:, L_x//2])  #The y-axis is inverted
 # probability_density_right = probability_density[index][:, L_x-1]/np.linalg.norm(probability_density[index][:, L_x-1])  #The y-axis is inverted
+probability_density_left = probability_density[index][:, L_x//2-1]/np.linalg.norm(probability_density[index][:, L_x//2-1])  #The y-axis is inverted
 
 fig, ax = plt.subplots()
-ax.plot(y, probability_density_right, "o")
+ax.plot(y, probability_density_left, "o")
 #ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
 ax.set_xlabel(r"$\ell$")
 ax.set_ylabel("Probability density at the junction")

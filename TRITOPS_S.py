@@ -27,7 +27,7 @@ tau_z = np.array([[1, 0], [0, -1]])
 #%%
 
 t = 1
-t_J = t    #t/10
+t_J = t/2    #t/10
 Delta_A1u = t/2     #t/5
 # Delta_1 = -0.2*t
 # Delta_0 = 0.4*t
