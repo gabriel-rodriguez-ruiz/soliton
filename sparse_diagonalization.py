@@ -14,19 +14,22 @@ from phase_functions import phase_soliton_antisoliton_arctan, phase_single_solit
     phase_antisoliton_soliton, phase_soliton_antisoliton_arctan_A1u_S_around_pi, phase_soliton_antisoliton_S_around_zero, phase_soliton_antisoliton_S_around_pi
 import scipy
 
-L_x = 100
-L_y = 50       #L_y should be odd for single soliton
+# L_x = 400
+L_A1u = 300
+L_S = 100
+L_y = 150       #L_y should be odd for single soliton
 t = 1
-Delta = t/2    # TRITOPS-S      t/5
+Delta = t/10    # TRITOPS-S      t/5
 # Delta = t/2   #TRITOPS-TRITOPS
-Delta_0 = t/10      #t/10
+Delta_0_S = t/40      #t/10
+Delta_0_A1u = t/20
 mu = -2*t  #-2
 t_J = t/2   #t/10
-L = 24      #L_y//2
+L = 50      #L_y//2
 n = 12 #number of eigenvalues
 # lambda_J = 10
 phi_external = 0
-phi_eq = 0.22*2*np.pi    #0.14*2*np.pi
+phi_eq = 0.22*np.pi    #0.14*2*np.pi
 y = np.arange(1, L_y+1)
 y_0 = (L_y-L)//2
 y_1 = (L_y+L)//2
@@ -43,7 +46,7 @@ y_s = (L_y+1)//2
 # Phi = phase_soliton_antisoliton_S_around_pi(phi_external, phi_eq, y, y_0, y_1)
 Phi = phase_soliton_antisoliton_S_around_zero(phi_external, phi_eq, y, y_0, y_1)
 
-params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
+params = {"t": t, "mu": mu, "L_A1u": L_A1u, "L_S": L_S, "L_y": L_y, "Delta": Delta, "t_J": t_J, "L": L}
 # H = Hamiltonian_A1u_junction_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
 # H = Hamiltonian_A1u_S(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, t_J=t_J, Phi=Phi)
@@ -55,7 +58,7 @@ params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta, "t_J": t_J, 
 # H = Hamiltonian_A1us_junction_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H =  Hamiltonian_A1us_S_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 # H =  Hamiltonian_A1us_S_sparse_extended(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
-H =  Hamiltonian_A1us_S_sparse_extended_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
+H =  Hamiltonian_A1us_S_sparse_extended_periodic(t=t, mu=mu, L_S=L_S, L_A1u=L_A1u, L_y=L_y, Delta=Delta, Delta_0=Delta_0, t_J=t_J, Phi=Phi)
 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=n, sigma=0) 
 
@@ -72,16 +75,16 @@ localized_state_right = []
 probability_density_particle = []
 
 for i in index:
-    destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_x, L_y)
+    destruction_up, destruction_down, creation_down, creation_up = get_components(eigenvectors_sparse[:,i], L_A1u+L_S, L_y)
     probability_density.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)/(np.linalg.norm(np.abs(destruction_up)**2 + np.abs(destruction_down)**2 + np.abs(creation_down)**2 + np.abs(creation_up)**2)))
     probability_density_particle.append((np.abs(destruction_up)**2 + np.abs(destruction_down)**2))
     zero_state.append(np.stack((destruction_up, destruction_down, creation_down, creation_up), axis=2)) #positive energy eigenvector splitted in components
-    localized_state_upper_left.append(zero_state[i][(L_y+L)//2, L_x//2-1,:])
-    localized_state_upper_right.append(zero_state[i][(L_y+L)//2, L_x//2,:])
-    localized_state_bottom_left.append(zero_state[i][(L_y-L)//2, L_x//2-1,:])
-    localized_state_bottom_right.append(zero_state[i][(L_y-L)//2, L_x//2,:])
-    localized_state_left.append(zero_state[i][:, L_x//2-1,:])
-    localized_state_right.append(zero_state[i][:, L_x//2,:])
+    localized_state_upper_left.append(zero_state[i][(L_y+L)//2, L_A1u-1,:])
+    localized_state_upper_right.append(zero_state[i][(L_y+L)//2, L_A1u,:])
+    localized_state_bottom_left.append(zero_state[i][(L_y-L)//2, L_A1u-1,:])
+    localized_state_bottom_right.append(zero_state[i][(L_y-L)//2, L_A1u,:])
+    localized_state_left.append(zero_state[i][:, L_A1u-1,:])
+    localized_state_right.append(zero_state[i][:, L_A1u,:])
 
 #%% Plotting of probability density
 
@@ -99,7 +102,7 @@ plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
 
-index = 2
+index = 4
 fig, ax = plt.subplots()
 image = ax.imshow(probability_density[index], cmap="Blues", origin="lower") #I have made the transpose and changed the origin to have xy axes as usually
 plt.colorbar(image)
@@ -112,10 +115,12 @@ ax.set_title("Probability density")
 plt.tight_layout()
 # probability_density_right = probability_density[index][:, L_x//2]/np.linalg.norm(probability_density[index][:, L_x//2])  #The y-axis is inverted
 # probability_density_right = probability_density[index][:, L_x-1]/np.linalg.norm(probability_density[index][:, L_x-1])  #The y-axis is inverted
-probability_density_left = probability_density[index][:, L_x//2-1]/np.linalg.norm(probability_density[index][:, L_x//2-1])  #The y-axis is inverted
+# probability_density_left = probability_density[index][:, L_x//2-1]/np.linalg.norm(probability_density[index][:, L_x//2-1])  #The y-axis is inverted
+# probability_density_left = probability_density[index][:, L_A1u-1]/np.linalg.norm(probability_density[index][:, L_A1u-1])  #The y-axis is inverted
+probability_density_right = probability_density[index][:, L_A1u]/np.linalg.norm(probability_density[index][:, L_A1u])  #The y-axis is inverted
 
 fig, ax = plt.subplots()
-ax.plot(y, probability_density_left, "o")
+ax.plot(y, probability_density_right, "o")
 #ax.plot(np.arange(1, L_y+1), probability_density[index][:, L_x//2-1])
 ax.set_xlabel(r"$\ell$")
 ax.set_ylabel("Probability density at the junction")
@@ -159,7 +164,7 @@ for i in range(n):
 #image.set_clim(np.min(spin[:,:,1].T), np.max(spin[:,:,1].T))
 
 # Meshgrid
-x_mesh, y_mesh = np.meshgrid(np.linspace(0, L_x-1, L_x), 
+x_mesh, y_mesh = np.meshgrid(np.linspace(0, L_A1u+L_S-1, L_A1u+L_S), 
                     #np.linspace(L_y-1, 0, L_y))
                     np.linspace(0, L_y-1, L_y))
 

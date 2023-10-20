@@ -7,17 +7,21 @@ Created on Sun May 28 18:28:17 2023
 
 import numpy as np
 import matplotlib.pyplot as plt
-from hamiltonians import Hamiltonian_A1u_sparse
+from hamiltonians import Hamiltonian_A1u_sparse, Hamiltonian_S_sparse_periodic, Hamiltonian_S_periodic
 from functions import get_components
 import scipy
-L_x = 200
-L_y = 200
+L_x = 2
+L_y = 4
 t = 1
-Delta = t
+Delta = t/2
 mu = -2*t
 k = 24
 
-H = Hamiltonian_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta)
+# H = Hamiltonian_A1u_sparse(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta=Delta)
+H = Hamiltonian_S_sparse_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta_0=Delta)
+H_array = Hamiltonian_S_periodic(t=t, mu=mu, L_x=L_x, L_y=L_y, Delta_0=Delta)
+
+eigenvalues, eigenvectors = np.linalg.eigh(H_array) 
 eigenvalues_sparse, eigenvectors_sparse = scipy.sparse.linalg.eigsh(H, k=k, sigma=0) 
 params = {"t": t, "mu": mu, "L_x": L_x, "L_y": L_y, "Delta": Delta}
 

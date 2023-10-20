@@ -1196,7 +1196,7 @@ def Hamiltonian_A1us_S_sparse_periodic(t, mu, L_x, L_y, Delta, Delta_0, t_J, Phi
                M[index(L_x-1, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
    return scipy.sparse.csr_matrix(M + M.conj().T)
 
-def Hamiltonian_A1us_S_sparse_extended(t, mu, L_x, L_y, Delta, Delta_0, t_J, Phi):
+def Hamiltonian_A1us_S_sparse_extended(t, mu, L_S, L_A1u, L_y, Delta, Delta_0, t_J, Phi):
    r"""Return the matrix for A1us model with s and p wave pairing in a junction with an s-wave superconductor:
 
    .. math ::
@@ -1224,6 +1224,7 @@ def Hamiltonian_A1us_S_sparse_extended(t, mu, L_x, L_y, Delta, Delta_0, t_J, Phi
           H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}^\dagger(cos(\phi/2)\tau_z\sigma_0+isin(\phi/2)\tau_0\sigma_0)\vec{c}_{L_x,m}+H.c.]
    """
    phi = Phi[::-1]  # I have inverted the y axis
+   L_x = L_A1u + L_S
    M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
    onsite_A1us = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0*np.kron(tau_x, sigma_0) )  # para no duplicar al sumar la traspuesta
    for i in range(1, L_x//2+1):
@@ -1243,6 +1244,12 @@ def Hamiltonian_A1us_S_sparse_extended(t, mu, L_x, L_y, Delta, Delta_0, t_J, Phi
            for alpha in range(4):
                for beta in range(4):
                    M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_A1us[alpha, beta]
+   hopping_x_S = 1/2*(-t * np.kron(tau_z, sigma_0))
+   for i in range(L_A1u+1, L_x):
+       for j in range(1, L_y+1):    
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_S[alpha, beta]   
    hopping_y_A1u = 1/2*( -t * np.kron(tau_z, sigma_0) - 1j*Delta/2 * np.kron(tau_x, sigma_y) )
    for i in range(1, L_x//2+1):
        for j in range(1, L_y): 
@@ -1259,10 +1266,10 @@ def Hamiltonian_A1us_S_sparse_extended(t, mu, L_x, L_y, Delta, Delta_0, t_J, Phi
        hopping_junction_x = t_J/2 * (np.cos(phi[j-1]/2)*np.kron(tau_z, sigma_0)+1j*np.sin(phi[j-1]/2)*np.kron(tau_0, sigma_0))
        for alpha in range(4):
            for beta in range(4):
-               M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
+               M[index(L_A1u, j, alpha, L_x, L_y), index(L_A1u+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
    return scipy.sparse.csr_matrix(M + M.conj().T)
 
-def Hamiltonian_A1us_S_sparse_extended_periodic(t, mu, L_x, L_y, Delta, Delta_0, t_J, Phi):
+def Hamiltonian_A1us_S_sparse_extended_periodic(t, mu, L_A1u, L_S, L_y, Delta, Delta_0_A1u, Delta_0_S, t_J, Phi):
    r"""Return the matrix for A1us model with s and p wave pairing in a junction with an s-wave superconductor:
 
    .. math ::
@@ -1290,33 +1297,40 @@ def Hamiltonian_A1us_S_sparse_extended_periodic(t, mu, L_x, L_y, Delta, Delta_0,
           H_J = t_J/2\sum_m^{L_y}[\vec{c}_{L_x-1,m}^\dagger(cos(\phi/2)\tau_z\sigma_0+isin(\phi/2)\tau_0\sigma_0)\vec{c}_{L_x,m}+H.c.]
    """
    phi = Phi[::-1]  # I have inverted the y axis
+   L_x = L_A1u + L_S
    M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
-   onsite_A1us = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0*np.kron(tau_x, sigma_0) )  # para no duplicar al sumar la traspuesta
-   for i in range(1, L_x//2+1):
+   onsite_A1us = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0_A1u*np.kron(tau_x, sigma_0) )  # para no duplicar al sumar la traspuesta
+   for i in range(1, L_A1u+1):
        for j in range(1, L_y+1):
            for alpha in range(4):
                for beta in range(4):
                    M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite_A1us[alpha, beta]   
-   onsite_S = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0*np.kron(tau_x, sigma_0) )
-   for i in range(L_x//2+1, L_x+1):    
+   onsite_S = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0_S*np.kron(tau_x, sigma_0) )
+   for i in range(L_A1u+1, L_x+1):    
        for j in range(1, L_y+1):
            for alpha in range(4):
                for beta in range(4):
                    M[index(L_x, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = onsite_S[alpha, beta]
    hopping_x_A1us = 1/2*(-t * np.kron(tau_z, sigma_0) - 1j*Delta/2 * np.kron(tau_x, sigma_x) )
-   for i in range(1, L_x//2):
+   for i in range(1, L_A1u):
        for j in range(1, L_y+1):    
            for alpha in range(4):
                for beta in range(4):
                    M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_A1us[alpha, beta]
+   hopping_x_S = 1/2*(-t * np.kron(tau_z, sigma_0))
+   for i in range(L_A1u+1, L_x):
+       for j in range(1, L_y+1):    
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_S[alpha, beta]
    hopping_y_A1u = 1/2*( -t * np.kron(tau_z, sigma_0) - 1j*Delta/2 * np.kron(tau_x, sigma_y) )
-   for i in range(1, L_x//2+1):
+   for i in range(1, L_A1u+1):
        for j in range(1, L_y+1): 
            for alpha in range(4):
                for beta in range(4):
                    M[index_periodic(i, j, alpha, L_x, L_y), index_periodic(i, j+1, beta, L_x, L_y)] = hopping_y_A1u[alpha, beta]
    hopping_y_S = -t/2 * np.kron(tau_z, sigma_0)    
-   for i in range(L_x//2+1, L_x+1):
+   for i in range(L_A1u+1, L_x+1):
        for j in range(1, L_y+1): 
            for alpha in range(4):
                for beta in range(4):
@@ -1325,7 +1339,7 @@ def Hamiltonian_A1us_S_sparse_extended_periodic(t, mu, L_x, L_y, Delta, Delta_0,
        hopping_junction_x = t_J/2 * (np.cos(phi[j-1]/2)*np.kron(tau_z, sigma_0)+1j*np.sin(phi[j-1]/2)*np.kron(tau_0, sigma_0))
        for alpha in range(4):
            for beta in range(4):
-               M[index(L_x//2, j, alpha, L_x, L_y), index(L_x//2+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
+               M[index(L_A1u, j, alpha, L_x, L_y), index(L_A1u+1, j, beta, L_x, L_y)] = hopping_junction_x[alpha, beta]
    return scipy.sparse.csr_matrix(M + M.conj().T)
 
 def Hamiltonian_A1us_k(t, k, mu, L, Delta_A1u, Delta_S):
@@ -1359,3 +1373,77 @@ def Hamiltonian_A1us_k(t, k, mu, L, Delta_A1u, Delta_S):
             for beta in range(4):
                 M[index_k(i, alpha, L), index_k(i+1, beta, L)] = hopping_A1u[alpha, beta]
     return M + M.conj().T
+
+def Hamiltonian_S_sparse_periodic(t, mu, L_x, L_y, Delta_0):
+   r"""Return the matrix for S model with s wave pairing:
+
+   .. math ::
+      \vec{c_{n,m}} = (c_{n,m,\uparrow},
+                       c_{n,m,\downarrow},
+                       c^\dagger_{n,m,\downarrow},
+                       -c^\dagger_{n,m,\uparrow})^T
+             
+           H_{S} = \frac{1}{2}\sum_m^{L_y} \mathbf{c}^\dagger_{L_x,m}\left[ 
+                       -\mu\tau_z\sigma_0 + \Delta_0\tau_x\sigma_0 \right] \mathbf{c}_{L_x,m}\nonumber
+           				+ \frac{1}{2}
+                       \sum_m^{L_y-1}\left[\mathbf{c}^\dagger_{L_x,m}\left(-t\tau_z\sigma_0 \right)\mathbf{c}_{L_x,m+1}
+                       + H.c.\right]
+           
+   """
+   M = scipy.sparse.lil_matrix((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
+   onsite_S = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0*np.kron(tau_x, sigma_0) )
+   for i in range(1, L_x+1):    
+       for j in range(1, L_y+1):
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(L_x, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = onsite_S[alpha, beta]
+   hopping_x_S = 1/2*(-t * np.kron(tau_z, sigma_0))
+   for i in range(1, L_x):
+       for j in range(1, L_y+1):    
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_S[alpha, beta]
+   hopping_y_S = -t/2 * np.kron(tau_z, sigma_0)    
+   for i in range(1, L_x+1):
+       for j in range(1, L_y+1): 
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index_periodic(i, j, alpha, L_x, L_y), index_periodic(i, j+1, beta, L_x, L_y)] = hopping_y_S[alpha, beta]
+   return scipy.sparse.csr_matrix(M + M.conj().T)
+
+def Hamiltonian_S_periodic(t, mu, L_x, L_y, Delta_0):
+   r"""Return the matrix for S model with s wave pairing:
+
+   .. math ::
+      \vec{c_{n,m}} = (c_{n,m,\uparrow},
+                       c_{n,m,\downarrow},
+                       c^\dagger_{n,m,\downarrow},
+                       -c^\dagger_{n,m,\uparrow})^T
+             
+           H_{S} = \frac{1}{2}\sum_m^{L_y} \mathbf{c}^\dagger_{L_x,m}\left[ 
+                       -\mu\tau_z\sigma_0 + \Delta_0\tau_x\sigma_0 \right] \mathbf{c}_{L_x,m}\nonumber
+           				+ \frac{1}{2}
+                       \sum_m^{L_y-1}\left[\mathbf{c}^\dagger_{L_x,m}\left(-t\tau_z\sigma_0 \right)\mathbf{c}_{L_x,m+1}
+                       + H.c.\right]
+           
+   """
+   M = np.zeros((4*(L_x)*L_y, 4*(L_x)*L_y), dtype=complex)
+   onsite_S = 1/4*( -mu * np.kron(tau_z, sigma_0) + Delta_0*np.kron(tau_x, sigma_0) )
+   for i in range(1, L_x+1):    
+       for j in range(1, L_y+1):
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(L_x, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = onsite_S[alpha, beta]
+   hopping_x_S = 1/2*(-t * np.kron(tau_z, sigma_0))
+   for i in range(1, L_x):
+       for j in range(1, L_y+1):    
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(i, j, alpha, L_x, L_y), index(i+1, j, beta, L_x, L_y)] = hopping_x_S[alpha, beta]
+   hopping_y_S = -t/2 * np.kron(tau_z, sigma_0)    
+   for i in range(1, L_x+1):
+       for j in range(1, L_y): 
+           for alpha in range(4):
+               for beta in range(4):
+                   M[index(i, j, alpha, L_x, L_y), index(i, j+1, beta, L_x, L_y)] = hopping_y_S[alpha, beta]
+   return M + M.conj().T

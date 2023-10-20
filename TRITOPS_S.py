@@ -28,11 +28,11 @@ tau_z = np.array([[1, 0], [0, -1]])
 
 t = 1
 t_J = t/2    #t/10
-Delta_A1u = t/2     #t/5
+Delta_A1u = t/10     #t/5
 # Delta_1 = -0.2*t
 # Delta_0 = 0.4*t
 # Lambda = t/2
-Delta_S = t/10      #t/10
+Delta_S = t/40      #t/10
 
 mu = -2*t
 # phi_values = np.linspace(0, 2*np.pi, 240)
@@ -41,8 +41,8 @@ phi_values = np.linspace(0, 2*np.pi, 50)
 k_values = np.linspace(0, np.pi, 50)
 
 # A1u-S junction
-L_A1u = 50      #50
-L_S = 50       # 1
+L_A1u = 300      #50
+L_S = 100       # 1
 L = L_A1u + L_S
 params = dict(t=t, mu=mu, Delta_A1u=Delta_A1u,
               L_A1u=L_A1u, L_S=L_S, t_J=t_J,
@@ -132,13 +132,15 @@ plt.rcParams['ytick.right'] = True    #ticks on left
 plt.rcParams['ytick.labelright'] = False
 plt.rc('legend', fontsize=18) #fontsize of the legend
 
-def energy(phi_values, E_0):
-    return E_0*(4*np.cos(phi_eq[0])*(1-np.cos(phi_values))-2*np.sin(phi_values)**2) 
-
-E_0 = scipy.optimize.curve_fit(energy, xdata = phi_values, ydata = -total_energy+total_energy[0])[0]
+def energy(phi_values, E_0, E_J):
+    # return E_0*(4*np.cos(phi_eq[0])*(1-np.cos(phi_values))-2*np.sin(phi_values)**2) 
+    return E_J*(1-np.cos(phi_values)) - 2*E_0*np.sin(phi_values)**2
+popt, pcov = scipy.optimize.curve_fit(energy, xdata = phi_values, ydata = -total_energy+total_energy[0])
+E_0 = popt[0]
+E_J = popt[1]
 fig, ax = plt.subplots()
 ax.plot(phi_values/(2*np.pi), -total_energy+total_energy[0], label="Numerical")
-ax.plot(phi_values/(2*np.pi), energy(phi_values, E_0), label=f"Analytical E_0={E_0[0]:.2}" )
+ax.plot(phi_values/(2*np.pi), energy(phi_values, E_0, E_J))
 ax.set_xlabel(r"$\phi/(2\pi)$")
 ax.set_ylabel(r"$E(\phi)$")
 ax.set_title(r"$\phi_{0}=$"+f"{(2*np.pi-phi_eq[0])/(2*np.pi):.2}"+r"$\times 2\pi$")
