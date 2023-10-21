@@ -1433,7 +1433,7 @@ def Hamiltonian_S_periodic(t, mu, L_x, L_y, Delta_0):
        for j in range(1, L_y+1):
            for alpha in range(4):
                for beta in range(4):
-                   M[index(L_x, j, alpha, L_x, L_y), index(L_x, j, beta, L_x, L_y)] = onsite_S[alpha, beta]
+                   M[index(i, j, alpha, L_x, L_y), index(i, j, beta, L_x, L_y)] = onsite_S[alpha, beta]
    hopping_x_S = 1/2*(-t * np.kron(tau_z, sigma_0))
    for i in range(1, L_x):
        for j in range(1, L_y+1):    
