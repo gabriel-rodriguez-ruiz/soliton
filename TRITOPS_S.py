@@ -36,9 +36,9 @@ Delta_S = t/40      #t/10
 
 mu = -2*t
 # phi_values = np.linspace(0, 2*np.pi, 240)
-phi_values = np.linspace(0, 2*np.pi, 50)
+phi_values = np.linspace(0, 2*np.pi, 10)
 # k_values = np.linspace(0, np.pi, 100)
-k_values = np.linspace(0, np.pi, 50)
+k_values = np.linspace(0, np.pi, 10)
 
 # A1u-S junction
 L_A1u = 300      #50
